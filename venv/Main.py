@@ -11,26 +11,29 @@ def generate_Asteroid_Belt(radius, number_of_ast):
     num = 0
     AstList = []
     while num < number_of_ast:
-        r = random.randint(radius-5000000, radius+5000000)
+        r = random.randint(radius-19500000000, radius+19500000000)
         tetha = random.uniform(0,2*math.pi)
         x = r*math.cos(tetha)
         y = r*math.sin(tetha)
         d = math.sqrt(x**2 + y**2)
-        v = math.sqrt(Constants.G*5.97219*10**24/d)
+        v = math.sqrt(Constants.G*1.989*10**30/d)
         angle = math.atan2(y, x)+math.pi/2
-        vx = v*math.cos(angle)*random.uniform(0.95,1.05)
-        vy = v*math.sin(angle)*random.uniform(0.95,1.05)
+        vx = v*math.cos(angle)*random.uniform(0.97,1.03)
+        vy = v*math.sin(angle)*random.uniform(0.97,1.03)
         mass = random.randint(500, 1000000)
         print(x,y)
-        AstList.append(Celestial_bodies.Asteroid("Ast"+str(num), mass, 300000 + random.randint(-200000, 300000), x, y, vx, vy))
+        AstList.append(Celestial_bodies.Asteroid("Ast"+str(num), mass, 300000000 + random.randint(-200000000, 300000000), x, y, vx, vy))
         num+=1
     return AstList
 
 
-Earth = Celestial_bodies.Planet("Earth", 5.97219*10**24, 6371000, 0, 0, 0, 0)
-ast = generate_Asteroid_Belt(38440000, 865)
-Moon = Celestial_bodies.Planet("Moon", 7.34767*10**22, 2737000, 384400000, 0, 0, 1018)
-sim = Simulation_tools.Simulation([Earth, Moon],ast, 65)
+Earth = Celestial_bodies.Planet("Earth", 5.97219*10**24, 63710000, 147098070000, 0, 0, 30280)
+Sun = Celestial_bodies.Planet("Sun", 1.989*10**30, 6963400000, 0, 0, 0, 0)
+Mars = Celestial_bodies.Planet("Mars", 6.39*10**23, 33895000, 1.38*Constants.AU, 0, 0, 26500)
+#Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**27, 699110000, 5.034*Constants.AU, 0, 0, 13720)
+ast = generate_Asteroid_Belt(329115316000, 2665)
+#Moon = Celestial_bodies.Planet("Moon", 7.34767*10**22, 1737000, 147098070000 + 384400000, 0, 0, 61298)
+sim = Simulation_tools.Simulation([Earth, Sun, Mars],ast, 99945)
 pygame.init()
 
 resolution = (1080,720)
@@ -43,11 +46,16 @@ i=0
 while running :
     i+=1
     sim.simulate()
+    x_offset = -Constants.scale * ast[5].pos_x
+    y_offset = Constants.scale * ast[5].pos_y
     pygame.draw.rect(screen, black, screct)
-    Earth.draw(resolution,screen)
-    Moon.draw(resolution, screen)
+    Earth.draw(resolution,screen, x_offset, y_offset)
+    Sun.draw(resolution, screen, x_offset, y_offset)
+    Mars.draw(resolution, screen, x_offset, y_offset)
+    #Jupiter.draw(resolution, screen, x_offset, y_offset)
+    #Moon.draw(resolution,screen, x_offset, y_offset)
     for j in ast:
-        j.draw(resolution,screen)
+        j.draw(resolution,screen, x_offset, y_offset)
     pygame.display.flip()
     if i >69000: running = False
 

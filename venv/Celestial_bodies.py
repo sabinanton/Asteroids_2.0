@@ -3,8 +3,8 @@ import pygame
 import Constants
 import random
 
-def conv(res, x, y):
-    return (int(Constants.scale*x+res[0]/2), int(res[1]/2-Constants.scale*y))
+def conv(res, x, y, x_offset, y_offset):
+    return (int(Constants.scale*x+res[0]/2 + x_offset), int(res[1]/2-Constants.scale*y + y_offset))
 
 
 class Planet:
@@ -26,9 +26,9 @@ class Planet:
         self.velocity_x = vx
         self.velocity_y = vy
 
-    def draw(self, resolution, screen):
-        pos = conv(resolution, self.pos_x, self.pos_y)
-        pygame.draw.circle(screen, (255, 255, 255), pos, int(self.Radius*Constants.scale), min(2,int(self.Radius*Constants.scale)))
+    def draw(self, resolution, screen, x_offset, y_offset):
+        pos = conv(resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        pygame.draw.circle(screen, (255, 255, 255), pos, max(2,int(self.Radius*Constants.scale)), min(2,int(self.Radius*Constants.scale)))
 
 class Asteroid:
     Name = 'Planet'
@@ -54,8 +54,8 @@ class Asteroid:
 
     def generatePoints(self):
         points = []
-        offset = 1000
-        n_of_points = random.randint(4, 7)
+        offset = 2000
+        n_of_points = random.randint(3, 12)
         angle_step = 2 * math.pi / n_of_points
         for i in range(n_of_points):
             r = self.Radius + random.randint(-offset, +offset)
@@ -64,14 +64,10 @@ class Asteroid:
             points.append(point)
         return points
 
-    def draw(self, resolution, screen):
+    def draw(self, resolution, screen, x_offset, y_offset):
         pts = []
         white = (255, 255, 255)
         for i in range(len(self.Points)):
-            pts.append(conv(resolution, self.Points[i][0] + self.pos_x, self.Points[i][1] + self.pos_y))
+            pts.append(conv(resolution, self.Points[i][0] + self.pos_x, self.Points[i][1] + self.pos_y, x_offset, y_offset))
 
-        pygame.draw.polygon(screen, white, pts, min(2, int(self.Radius * Constants.scale)))
-
-
-        #pygame.draw.circle(screen, (255, 255, 255), pos, int(self.Radius * Constants.scale),
-                          # min(2, int(self.Radius * Constants.scale)))
+        pygame.draw.polygon(screen, white, pts, 3)
