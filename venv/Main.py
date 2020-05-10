@@ -28,9 +28,9 @@ def generate_Asteroid_Belt(radius, number_of_ast):
 
 
 Earth = Celestial_bodies.Planet("Earth", 5.97219*10**24, 6371000, 0, 0, 0, 0)
-ast = generate_Asteroid_Belt(138440000, 565)
+ast = generate_Asteroid_Belt(38440000, 865)
 Moon = Celestial_bodies.Planet("Moon", 7.34767*10**22, 2737000, 384400000, 0, 0, 1018)
-sim = Simulation_tools.Simulation([Earth, Moon],ast, 865)
+sim = Simulation_tools.Simulation([Earth, Moon],ast, 65)
 pygame.init()
 
 resolution = (1080,720)

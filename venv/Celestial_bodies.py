@@ -1,6 +1,7 @@
 import math
 import pygame
 import Constants
+import random
 
 def conv(res, x, y):
     return (int(Constants.scale*x+res[0]/2), int(res[1]/2-Constants.scale*y))
@@ -39,6 +40,7 @@ class Asteroid:
     velocity_y = 0
     acceleration_x = 0
     acceleration_y = 0
+    Points = []
 
     def __init__(self, name, m, r, x, y, vx, vy):
         self.Name = name
@@ -48,8 +50,28 @@ class Asteroid:
         self.pos_y = y
         self.velocity_x = vx
         self.velocity_y = vy
+        self.Points = self.generatePoints()
+
+    def generatePoints(self):
+        points = []
+        offset = 1000
+        n_of_points = random.randint(4, 7)
+        angle_step = 2 * math.pi / n_of_points
+        for i in range(n_of_points):
+            r = self.Radius + random.randint(-offset, +offset)
+            gamma = i * angle_step + random.uniform(-0.5, 0.5)
+            point = [r * math.cos(gamma), r * math.sin(gamma)]
+            points.append(point)
+        return points
 
     def draw(self, resolution, screen):
-        pos = conv(resolution, self.pos_x, self.pos_y)
-        pygame.draw.circle(screen, (255, 255, 255), pos, int(self.Radius * Constants.scale),
-                           min(2, int(self.Radius * Constants.scale)))
+        pts = []
+        white = (255, 255, 255)
+        for i in range(len(self.Points)):
+            pts.append(conv(resolution, self.Points[i][0] + self.pos_x, self.Points[i][1] + self.pos_y))
+
+        pygame.draw.polygon(screen, white, pts, min(2, int(self.Radius * Constants.scale)))
+
+
+        #pygame.draw.circle(screen, (255, 255, 255), pos, int(self.Radius * Constants.scale),
+                          # min(2, int(self.Radius * Constants.scale)))
