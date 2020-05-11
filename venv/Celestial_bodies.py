@@ -3,8 +3,8 @@ import pygame
 import Constants
 import random
 
-def conv(res, x, y, x_offset, y_offset):
-    return (int(Constants.scale*x+res[0]/2 + x_offset), int(res[1]/2-Constants.scale*y + y_offset))
+def conv(scale, res, x, y, x_offset, y_offset):
+    return (int(scale*x+res[0]/2 + x_offset), int(res[1]/2-scale*y + y_offset))
 
 
 class Planet:
@@ -26,9 +26,9 @@ class Planet:
         self.velocity_x = vx
         self.velocity_y = vy
 
-    def draw(self, resolution, screen, x_offset, y_offset):
-        pos = conv(resolution, self.pos_x, self.pos_y, x_offset, y_offset)
-        pygame.draw.circle(screen, (255, 255, 255), pos, max(2,int(self.Radius*Constants.scale)), min(2,int(self.Radius*Constants.scale)))
+    def draw(self, resolution, screen, x_offset, y_offset, scale):
+        pos = conv(scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        pygame.draw.circle(screen, (255, 255, 255), pos, max(2,int(self.Radius*scale)), min(2,int(self.Radius*scale)))
 
 class Asteroid:
     Name = 'Planet'
@@ -40,9 +40,11 @@ class Asteroid:
     velocity_y = 0
     acceleration_x = 0
     acceleration_y = 0
+    tetha = 0
+    omega = 0
     Points = []
 
-    def __init__(self, name, m, r, x, y, vx, vy):
+    def __init__(self, name, m, r, x, y, vx, vy, tetha, omega):
         self.Name = name
         self.Mass = m
         self.Radius = r
@@ -50,24 +52,27 @@ class Asteroid:
         self.pos_y = y
         self.velocity_x = vx
         self.velocity_y = vy
+        self.tetha = tetha
+        self.omega = omega
         self.Points = self.generatePoints()
 
     def generatePoints(self):
         points = []
-        offset = 2000
-        n_of_points = random.randint(3, 12)
+        offset = 80000000
+        n_of_points = random.randint(3, 16)
         angle_step = 2 * math.pi / n_of_points
         for i in range(n_of_points):
             r = self.Radius + random.randint(-offset, +offset)
-            gamma = i * angle_step + random.uniform(-0.5, 0.5)
+            gamma = i * angle_step + random.uniform(-0.35, 0.35) + self.tetha
             point = [r * math.cos(gamma), r * math.sin(gamma)]
             points.append(point)
         return points
 
-    def draw(self, resolution, screen, x_offset, y_offset):
+    def draw(self, resolution, screen, x_offset, y_offset, scale):
         pts = []
         white = (255, 255, 255)
         for i in range(len(self.Points)):
-            pts.append(conv(resolution, self.Points[i][0] + self.pos_x, self.Points[i][1] + self.pos_y, x_offset, y_offset))
+            t = self.tetha
+            pts.append(conv(scale, resolution, self.Points[i][0]*math.cos(t)-self.Points[i][1]*math.sin(t) + self.pos_x, self.Points[i][1]*math.cos(t)+self.Points[i][0]*math.sin(t) + self.pos_y, x_offset, y_offset))
 
         pygame.draw.polygon(screen, white, pts, 3)
