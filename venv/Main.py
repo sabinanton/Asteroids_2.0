@@ -15,15 +15,21 @@ pygame.init()
 
 resolution = (1080,720)
 screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
+
 screct = screen.get_rect()
 black = (0,0,0)
 running = True
 i=0
-map = Maps.Game_Map(1/10000000)
-
+map = Maps.Game_Map(1/40000000)
+mini_map_scale = 1/3000000000
+minimap_res = (300,300)
 while running :
-    map.update()
+    minimap = pygame.Surface(minimap_res)
+    map.update(map.Earth)
     map.draw(resolution, screen)
+    map.update_fixed_scale(map.Sun, mini_map_scale)
+    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.Earth)
+    screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

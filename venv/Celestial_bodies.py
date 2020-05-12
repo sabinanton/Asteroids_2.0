@@ -26,9 +26,9 @@ class Planet:
         self.velocity_x = vx
         self.velocity_y = vy
 
-    def draw(self, resolution, screen, x_offset, y_offset, scale):
+    def draw(self, resolution, screen, x_offset, y_offset, scale, color):
         pos = conv(scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
-        pygame.draw.circle(screen, (255, 255, 255), pos, max(2,int(self.Radius*scale)), min(2,int(self.Radius*scale)))
+        pygame.draw.circle(screen, color, pos, max(2,int(self.Radius*scale)), min(2,int(self.Radius*scale)))
 
 class Asteroid:
     Name = 'Planet'
@@ -68,11 +68,11 @@ class Asteroid:
             points.append(point)
         return points
 
-    def draw(self, resolution, screen, x_offset, y_offset, scale):
+    def draw(self, resolution, screen, x_offset, y_offset, scale, color):
         pts = []
         white = (255, 255, 255)
         for i in range(len(self.Points)):
             t = self.tetha
             pts.append(conv(scale, resolution, self.Points[i][0]*math.cos(t)-self.Points[i][1]*math.sin(t) + self.pos_x, self.Points[i][1]*math.cos(t)+self.Points[i][0]*math.sin(t) + self.pos_y, x_offset, y_offset))
 
-        pygame.draw.polygon(screen, white, pts, 3)
+        pygame.draw.polygon(screen, color, pts, 3)
