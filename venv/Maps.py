@@ -10,13 +10,13 @@ class Game_Map:
     red = (255, 130, 100)
     map_white = (50,50,50)
     def __init__(self, scale):
-        self.Earth = Celestial_bodies.Planet("Earth", 5.97219 * 10 ** 24, 637100000 * 5, 147098070000, 0, 0, 30280)
-        self.Sun = Celestial_bodies.Planet("Sun", 1.989 * 10 ** 30, 13926800000, 0, 0, 0, 0)
-        self.Mars = Celestial_bodies.Planet("Mars", 6.39 * 10 ** 23, 338950000 * 5, 1.38 * Constants.AU, 0, 0, 26500)
-        self.Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**29, 699110000, 5.034*Constants.AU, 0, 0, 13720)
-        self.ast = self.generate_Asteroid_Belt(329115316000, 2385)
-        #self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 17370000, 147098070000 + 3844000000, 0, 0, 30298)
-        self.sim = Simulation_tools.Simulation([self.Earth, self.Sun, self.Mars], self.ast,  35555)
+        self.Earth = Celestial_bodies.Planet("Earth", 5.97219 * 10 ** 27, 63710000 * 25, 147098070000, 0, 0, 30040.49)
+        self.Sun = Celestial_bodies.Planet("Sun", 1.989 * 10 ** 30, 13926800000/2, 0, 0, 0, 0)
+        self.Mars = Celestial_bodies.Planet("Mars", 6.39 * 10 ** 23, 338950000 * 5/2, 1.38 * Constants.AU, 0, 0, 26500)
+        #self.Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**28, 699110000, 5.034*Constants.AU, 0, 0, 13720)
+        self.ast = self.generate_Asteroid_Belt(359115316000, 1685)
+        self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 173700000 * 5, 147098070000 + 4844000000, 0, 0, 39051.33)
+        self.sim = Simulation_tools.Simulation([self.Earth, self.Sun, self.Mars, self.Moon], self.ast,  25555)
         self.x_offset = 0
         self.y_offset = 0
         self.scale = scale
@@ -31,20 +31,20 @@ class Game_Map:
         num = 0
         AstList = []
         while num < number_of_ast:
-            r = random.randint(radius - 19500000000, radius + 19500000000)
+            r = random.randint(radius - 59500000000, radius + 59500000000)
             tetha = random.uniform(0, 2 * math.pi)
             x = r * math.cos(tetha)
             y = r * math.sin(tetha)
             d = math.sqrt(x ** 2 + y ** 2)
             v = math.sqrt(Constants.G * 1.989 * 10 ** 30 / d)
             angle = math.atan2(y, x) + math.pi / 2
-            vx = v * math.cos(angle) * random.uniform(0.97, 1.03)
-            vy = v * math.sin(angle) * random.uniform(0.97, 1.03)
+            vx = v * math.cos(angle) * random.uniform(0.95, 1.05)
+            vy = v * math.sin(angle) * random.uniform(0.95, 1.05)
             omega = random.uniform(-0.000005, 0.000005)
             mass = random.randint(50000, 100000000)
             # print(x,y)
             AstList.append(
-                Celestial_bodies.Asteroid("Ast" + str(num), mass, 300000000 + random.randint(-200000000, 300000000), x,
+                Celestial_bodies.Asteroid("Ast" + str(num), mass, 350000000*2 + random.randint(-200000000*2, 300000000*2), x,
                                           y, vx, vy, 0, omega))
             num += 1
         return AstList
@@ -66,8 +66,8 @@ class Game_Map:
         self.Earth.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.blue)
         self.Sun.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         self.Mars.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.red)
-        #self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale)
-        self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
+        self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
+        #self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
             j.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
@@ -86,8 +86,8 @@ class Game_Map:
         self.Earth.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.blue)
         self.Sun.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
         self.Mars.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.red)
-        #self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale)
-        self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
+        self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
+        #self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
             j.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)

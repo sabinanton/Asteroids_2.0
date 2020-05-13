@@ -59,7 +59,7 @@ class Asteroid:
     def generatePoints(self):
         points = []
         offset = 80000000
-        n_of_points = random.randint(3, 16)
+        n_of_points = random.randint(5, 16)
         angle_step = 2 * math.pi / n_of_points
         for i in range(n_of_points):
             r = self.Radius + random.randint(-offset, +offset)

@@ -17,11 +17,11 @@ class Simulation:
         self.planetList = pList
         self.asteroidList = aList
 
-    def updatePlanet(self, body, ax, ay):
-        vx = body.velocity_x + ax*self.step
-        vy = body.velocity_y + ay*self.step
-        x = body.pos_x + vx*self.step
-        y = body.pos_y + vy*self.step
+    def updatePlanet(self, body, ax, ay, Step):
+        vx = body.velocity_x + ax*Step
+        vy = body.velocity_y + ay*Step
+        x = body.pos_x + vx*Step
+        y = body.pos_y + vy*Step
         body.acceleration_x = ax
         body.acceleration_y = ay
         body.velocity_x = vx
@@ -29,12 +29,12 @@ class Simulation:
         body.pos_x = x
         body.pos_y = y
 
-    def updateAsteroid(self, body, ax, ay):
-        vx = body.velocity_x + ax*self.step
-        vy = body.velocity_y + ay*self.step
-        x = body.pos_x + vx*self.step
-        y = body.pos_y + vy*self.step
-        body.tetha = body.tetha + body.omega*self.step
+    def updateAsteroid(self, body, ax, ay, Step):
+        vx = body.velocity_x + ax*Step
+        vy = body.velocity_y + ay*Step
+        x = body.pos_x + vx*Step
+        y = body.pos_y + vy*Step
+        body.tetha = body.tetha + body.omega*Step
         body.acceleration_x = ax
         body.acceleration_y = ay
         body.velocity_x = vx
@@ -59,7 +59,7 @@ class Simulation:
                     
             acc_x = Force_x/pList[i].Mass
             acc_y = Force_y/pList[i].Mass
-            self.updatePlanet(pList[i], acc_x, acc_y)
+            self.updatePlanet(pList[i], acc_x, acc_y, self.step)
         for i in range(len(aList)):
             Force_x = 0
             Force_y = 0
@@ -73,5 +73,5 @@ class Simulation:
                     Force_y += Force*math.sin(gamma)
             acc_x = Force_x / aList[i].Mass
             acc_y = Force_y / aList[i].Mass
-            self.updateAsteroid(aList[i], acc_x, acc_y)
+            self.updateAsteroid(aList[i], acc_x, acc_y, self.step)
                 
