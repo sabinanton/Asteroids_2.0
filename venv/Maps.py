@@ -9,14 +9,15 @@ class Game_Map:
     blue = (100, 100, 255)
     red = (255, 130, 100)
     map_white = (50,50,50)
-    def __init__(self, scale):
+    def __init__(self, scale, step):
+        self.SpaceShip = Celestial_bodies.SpaceShip("StarShip", 400000000, 147098070000 + 4844000000, 0, 0, 39051.33, 0, 0, 100000000)
         self.Earth = Celestial_bodies.Planet("Earth", 5.97219 * 10 ** 27, 63710000 * 25, 147098070000, 0, 0, 30040.49)
         self.Sun = Celestial_bodies.Planet("Sun", 1.989 * 10 ** 30, 13926800000/2, 0, 0, 0, 0)
         self.Mars = Celestial_bodies.Planet("Mars", 6.39 * 10 ** 23, 338950000 * 5/2, 1.38 * Constants.AU, 0, 0, 26500)
         #self.Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**28, 699110000, 5.034*Constants.AU, 0, 0, 13720)
         self.ast = self.generate_Asteroid_Belt(359115316000, 1685)
-        self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 173700000 * 5, 147098070000 + 4844000000, 0, 0, 39051.33)
-        self.sim = Simulation_tools.Simulation([self.Earth, self.Sun, self.Mars, self.Moon], self.ast,  25555)
+        #self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 173700000 * 5, 147098070000 + 4844000000, 0, 0, 39051.33)
+        self.sim = Simulation_tools.Simulation([self.Earth, self.Sun, self.Mars], self.ast, self.SpaceShip,  step)
         self.x_offset = 0
         self.y_offset = 0
         self.scale = scale
@@ -26,6 +27,7 @@ class Game_Map:
         self.map_white = (150,150,150)
         self.black = (0,0,0)
         self.green = (30, 255, 30)
+        self.step = step
 
     def generate_Asteroid_Belt(self, radius, number_of_ast):
         num = 0
@@ -66,7 +68,8 @@ class Game_Map:
         self.Earth.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.blue)
         self.Sun.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         self.Mars.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.red)
-        self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
+        #self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
+        self.SpaceShip.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
@@ -86,7 +89,8 @@ class Game_Map:
         self.Earth.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.blue)
         self.Sun.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
         self.Mars.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.red)
-        self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
+        #self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
+        self.SpaceShip.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:

@@ -12,10 +12,11 @@ class Simulation:
     planetList = []
     asteroidList = []
 
-    def __init__(self, pList, aList, stp):
+    def __init__(self, pList, aList, Spaceship, stp):
         self.step = stp
         self.planetList = pList
         self.asteroidList = aList
+        self.Spaceship = Spaceship
 
     def updatePlanet(self, body, ax, ay, Step):
         vx = body.velocity_x + ax*Step
@@ -41,7 +42,20 @@ class Simulation:
         body.velocity_y = vy
         body.pos_x = x
         body.pos_y = y
-    
+
+    def updateSpaceShip(self, body, ax, ay, omega, Step):
+        vx = body.velocity_x + ax * Step
+        vy = body.velocity_y + ay * Step
+        x = body.pos_x + vx * Step
+        y = body.pos_y + vy * Step
+        body.tetha = body.tetha + (omega + body.omega) * Step
+        body.acceleration_x = ax
+        body.acceleration_y = ay
+        body.velocity_x = vx
+        body.velocity_y = vy
+        body.pos_x = x
+        body.pos_y = y
+
     def simulate(self):
         pList = self.planetList
         aList = self.asteroidList
@@ -78,4 +92,24 @@ class Simulation:
             acc_x = Force_x / aList[i].Mass
             acc_y = Force_y / aList[i].Mass
             self.updateAsteroid(aList[i], acc_x, acc_y, omega, self.step)
+        omega = 0
+        for j in range(len(pList)):
+            d = distance(self.Spaceship.pos_x, self.Spaceship.pos_y, pList[j].pos_x, pList[j].pos_y)
+            if d < self.Spaceship.Radius + self.Spaceship.Radius:
+                Force = -Constants.G * self.Spaceship.Mass * pList[j].Mass / d ** 2
+            else:
+                Force = Constants.G * self.Spaceship.Mass * pList[j].Mass / d ** 2
+            dx = self.Spaceship.pos_x - pList[j].pos_x
+            dy = self.Spaceship.pos_y - pList[j].pos_y
+            gamma = angle(self.Spaceship.pos_x, self.Spaceship.pos_y, pList[j].pos_x, pList[j].pos_y)
+            alpha = math.atan2(self.Spaceship.velocity_y, self.Spaceship.velocity_x)
+            velocity = math.sqrt(self.Spaceship.velocity_x ** 2 + self.Spaceship.velocity_y ** 2)
+            #if pList[j].Name == "Earth": omega = (velocity) / d
+            #print(omega)
+            #if pList[j].Name == "Earth": omega += (self.Spaceship.velocity_x/dy - self.Spaceship.velocity_y/dx)
+            Force_x += Force * math.cos(gamma)
+            Force_y += Force * math.sin(gamma)
+        acc_x = Force_x / self.Spaceship.Mass
+        acc_y = Force_y / self.Spaceship.Mass
+        self.updateSpaceShip(self.Spaceship, acc_x, acc_y, omega, self.step)
                 

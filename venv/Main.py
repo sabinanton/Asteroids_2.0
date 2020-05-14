@@ -9,6 +9,15 @@ import Simulation_tools, Maps
 
 
 
+def controls(event, Map):
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        Map.SpaceShip.T_accelerate(0.008, Map.step)
+        print("ACC")
+    if keys[pygame.K_d]:
+        Map.SpaceShip.Rotate(-1, 1/5)
+    if keys[pygame.K_a]:
+        Map.SpaceShip.Rotate(1, 1/5)
 
 
 pygame.init()
@@ -20,15 +29,15 @@ screct = screen.get_rect()
 black = (0,0,0)
 running = True
 i=0
-map = Maps.Game_Map(1/40000000)
+map = Maps.Game_Map(1/40000000, 25555)
 mini_map_scale = 1/3000000000
 minimap_res = (300,300)
 while running :
     minimap = pygame.Surface(minimap_res)
-    map.update(map.Sun)
+    map.update(map.SpaceShip)
     map.draw(resolution, screen)
     map.update_fixed_scale(map.Sun, mini_map_scale)
-    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.Sun)
+    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
     screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
     pygame.display.flip()
     for event in pygame.event.get():
@@ -51,6 +60,7 @@ while running :
                map.scale /= scale_change
             if event.button == 5:
                 map.scale *= scale_change
+    controls(event, map)
 
 
 
