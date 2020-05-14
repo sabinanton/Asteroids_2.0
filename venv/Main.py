@@ -25,10 +25,10 @@ mini_map_scale = 1/3000000000
 minimap_res = (300,300)
 while running :
     minimap = pygame.Surface(minimap_res)
-    map.update(map.Earth)
+    map.update(map.Sun)
     map.draw(resolution, screen)
     map.update_fixed_scale(map.Sun, mini_map_scale)
-    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.Earth)
+    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.Sun)
     screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
     pygame.display.flip()
     for event in pygame.event.get():

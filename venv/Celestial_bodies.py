@@ -76,3 +76,29 @@ class Asteroid:
             pts.append(conv(scale, resolution, self.Points[i][0]*math.cos(t)-self.Points[i][1]*math.sin(t) + self.pos_x, self.Points[i][1]*math.cos(t)+self.Points[i][0]*math.sin(t) + self.pos_y, x_offset, y_offset))
 
         pygame.draw.polygon(screen, color, pts, 3)
+
+class SpaceShip:
+    Name = 'Planet'
+    Mass = 0
+    Radius = 0
+    pos_x = 0
+    pos_y = 0
+    velocity_x = 0
+    velocity_y = 0
+    acceleration_x = 0
+    acceleration_y = 0
+    tetha = 0
+    omega = 0
+    scale = 1
+
+    def __init__(self, name, m, r, x, y, vx, vy, tetha, omega):
+        self.Name = name
+        self.Mass = m
+        self.Radius = r
+        self.pos_x = x
+        self.pos_y = y
+        self.velocity_x = vx
+        self.velocity_y = vy
+        self.tetha = tetha
+        self.omega = omega
+        self.scale = 1
