@@ -92,6 +92,7 @@ class SpaceShip:
     tetha = 0
     omega = 0
     scale = 1
+    Engine_fired = False
 
     def __init__(self, name, m, x, y, vx, vy, tetha, omega, scale):
         self.Name = name
@@ -103,11 +104,13 @@ class SpaceShip:
         self.tetha = tetha
         self.omega = omega
         self.scale = scale
+        self.Engine_fired = False
 
 
     def T_accelerate(self, acc, Step):
         self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
         self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
+        self.Engine_fired = True
     def Rotate(self, dir, shot):
         self.tetha += dir*shot
 
@@ -116,14 +119,28 @@ class SpaceShip:
         D_body = 5 * self.scale * game_scale
         h_top = 2 * self.scale * game_scale
         D_e = 5 * self.scale * game_scale
-        l_e = 2 * self.scale * game_scale
+        l_e = 3 * self.scale * game_scale
         d_tube = 1 * self.scale * game_scale
         l_tube = 2.5 * self.scale * game_scale
         l_stube = 3 * self.scale * game_scale
+        blue = (200,200,255)
         t = self.tetha
         body_points = [rotate(-D_body/2, -L_body/2, t), rotate(D_body/2, -L_body/2, t), rotate(D_body/2, L_body/2, t), rotate(-D_body/2, L_body/2, t)]
+        thrsuter_points = [rotate(0, L_body/2, t), rotate(-D_e/2, L_body/2 + l_e, t), rotate(D_e/2, L_body/2 + l_e, t)]
         body = []
         pos = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         for i in range(4):
            body.append([pos[0] + body_points[i][0], pos[1] + body_points[i][1]])
         pygame.draw.polygon(screen, color, body, 3)
+        thruster = []
+        for i in range(3):
+            thruster.append([pos[0] + thrsuter_points[i][0], pos[1] + thrsuter_points[i][1]])
+        if self.Engine_fired :
+            fire_points = [rotate(0, L_body / 2 + l_e*3, t), rotate(-D_e / 4, L_body / 2 + l_e, t),
+                               rotate(D_e / 4, L_body / 2 + l_e, t)]
+            fire = []
+            for i in range(3):
+                fire.append([pos[0] + fire_points[i][0], pos[1] + fire_points[i][1]])
+            pygame.draw.polygon(screen, blue, fire, 6)
+            self.Engine_fired = False
+        pygame.draw.polygon(screen, color, thruster, 3)

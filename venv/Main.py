@@ -12,12 +12,12 @@ import Simulation_tools, Maps
 def controls(event, Map):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
-        Map.SpaceShip.T_accelerate(0.008, Map.step)
+        Map.SpaceShip.T_accelerate(0.03, Map.step)
         print("ACC")
     if keys[pygame.K_d]:
-        Map.SpaceShip.Rotate(-1, 1/5)
+        Map.SpaceShip.Rotate(-1, 1/3)
     if keys[pygame.K_a]:
-        Map.SpaceShip.Rotate(1, 1/5)
+        Map.SpaceShip.Rotate(1, 1/3)
 
 
 pygame.init()
@@ -29,7 +29,7 @@ screct = screen.get_rect()
 black = (0,0,0)
 running = True
 i=0
-map = Maps.Game_Map(1/40000000, 25555)
+map = Maps.Game_Map(1/40000000, 15555)
 mini_map_scale = 1/3000000000
 minimap_res = (300,300)
 while running :
