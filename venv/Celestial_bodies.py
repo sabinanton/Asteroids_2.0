@@ -93,6 +93,8 @@ class SpaceShip:
     omega = 0
     scale = 1
     Engine_fired = False
+    Left_stube_fired = False
+    Right_stube_fired = False
 
     def __init__(self, name, m, x, y, vx, vy, tetha, omega, scale):
         self.Name = name
@@ -105,14 +107,24 @@ class SpaceShip:
         self.omega = omega
         self.scale = scale
         self.Engine_fired = False
+        self.Left_stube_fired = 0
+        self.Right_stube_fired = 0
 
 
     def T_accelerate(self, acc, Step):
         self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
         self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
         self.Engine_fired = True
+    def a_impulse(self, acc, dir, Step):
+        self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
+        self.velocity_y += -dir * acc * math.sin(self.tetha + math.pi / 2) * Step
+        self.Left_stube_fired = dir
+        self.Right_stube_fired = dir
     def Rotate(self, dir, shot):
-        self.tetha += dir*shot
+        self.omega += dir*shot
+        self.Left_stube_fired = dir
+        self.Right_stube_fired = -dir
+
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         L_body = 10 * self.scale * game_scale
@@ -125,7 +137,8 @@ class SpaceShip:
         l_stube = 3 * self.scale * game_scale
         blue = (200,200,255)
         t = self.tetha
-        body_points = [rotate(-D_body/2, -L_body/2, t), rotate(D_body/2, -L_body/2, t), rotate(D_body/2, L_body/2, t), rotate(-D_body/2, L_body/2, t)]
+        body_points = [rotate(-D_body/2, -L_body/2, t), rotate(D_body/2, -L_body/2, t),
+                       rotate(D_body/2, L_body/2, t), rotate(-D_body/2, L_body/2, t)]
         thrsuter_points = [rotate(0, L_body/2, t), rotate(-D_e/2, L_body/2 + l_e, t), rotate(D_e/2, L_body/2 + l_e, t)]
         body = []
         pos = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
@@ -144,3 +157,51 @@ class SpaceShip:
             pygame.draw.polygon(screen, blue, fire, 6)
             self.Engine_fired = False
         pygame.draw.polygon(screen, color, thruster, 3)
+        left_tube_points = [rotate(-D_body/2, -d_tube/2, t), rotate(-D_body/2, d_tube/2, t),
+                            rotate(-D_body/2 - l_tube, d_tube/2, t), rotate(-D_body/2 - l_tube, -d_tube/2, t)]
+        left_tube = []
+        for i in range(4):
+           left_tube.append([pos[0] + left_tube_points[i][0], pos[1] + left_tube_points[i][1]])
+        pygame.draw.polygon(screen, color, left_tube, 2)
+        right_tube_points = [rotate(D_body / 2, -d_tube / 2, t), rotate(D_body / 2, d_tube / 2, t),
+                            rotate(D_body / 2 + l_tube, d_tube / 2, t), rotate(D_body / 2 + l_tube, -d_tube / 2, t)]
+        right_tube = []
+        for i in range(4):
+            right_tube.append([pos[0] + right_tube_points[i][0], pos[1] + right_tube_points[i][1]])
+        pygame.draw.polygon(screen, color, right_tube, 2)
+        left_stube_points = [rotate(-D_body / 2 - l_tube/2, -l_tube / 2, t),
+                             rotate(-D_body / 2 -l_tube/2, l_tube / 2, t),
+                            rotate(-D_body / 2 - l_tube/2 - d_tube, l_tube / 2, t),
+                             rotate(-D_body / 2 - l_tube/2 - d_tube, -l_tube / 2, t)]
+        left_stube = []
+        for i in range(4):
+           left_stube.append([pos[0] + left_stube_points[i][0], pos[1] + left_stube_points[i][1]])
+        pygame.draw.polygon(screen, color, left_stube, 2)
+        right_stube_points = [rotate(D_body / 2 + l_tube / 2, -l_tube / 2, t),
+                             rotate(D_body / 2 + l_tube / 2, l_tube / 2, t),
+                             rotate(D_body / 2 + l_tube / 2 + d_tube, l_tube / 2, t),
+                             rotate(D_body / 2 + l_tube / 2 + d_tube, -l_tube / 2, t)]
+        right_stube = []
+        for i in range(4):
+            right_stube.append([pos[0] + right_stube_points[i][0], pos[1] + right_stube_points[i][1]])
+        pygame.draw.polygon(screen, color, right_stube, 2)
+        if self.Left_stube_fired:
+            left_stube_fire_points = [rotate(-D_body / 2 - l_tube/2 - d_tube/2, -self.Left_stube_fired*l_tube / 2, t),
+                                rotate(-D_body / 2 - l_tube/2 - d_tube/2 - d_tube/3, -self.Left_stube_fired*l_tube/2*3, t),
+                                  rotate(-D_body / 2 - l_tube / 2 - d_tube / 2 + d_tube / 3,
+                                         -self.Left_stube_fired * l_tube / 2 * 3, t) ]
+            left_stube_fire = []
+            for i in range(3):
+                left_stube_fire.append([pos[0] + left_stube_fire_points[i][0], pos[1] + left_stube_fire_points[i][1]])
+            pygame.draw.polygon(screen, color, left_stube_fire, 3)
+            self.Left_stube_fired = 0
+        if self.Right_stube_fired:
+            right_stube_fire_points = [rotate(D_body / 2 + l_tube/2 + d_tube/2, -self.Right_stube_fired*l_tube / 2, t),
+                                rotate(D_body / 2 + l_tube/2 + d_tube/2 + d_tube/3, -self.Right_stube_fired*l_tube/2*3, t),
+                                  rotate(D_body / 2 + l_tube / 2 + d_tube / 2 - d_tube / 3,
+                                         -self.Right_stube_fired * l_tube / 2 * 3, t) ]
+            right_stube_fire = []
+            for i in range(3):
+                right_stube_fire.append([pos[0] + right_stube_fire_points[i][0], pos[1] + right_stube_fire_points[i][1]])
+            pygame.draw.polygon(screen, color, right_stube_fire, 3)
+            self.Right_stube_fired = 0

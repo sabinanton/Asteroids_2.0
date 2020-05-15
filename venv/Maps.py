@@ -3,7 +3,7 @@ import pygame, Celestial_bodies, Constants, random, math, Simulation_tools
 
 class Game_Map:
     
-    scale = 1/10000000
+    scale = 1/18000000
     black = (0, 0, 0)
     white = (255, 255, 255)
     blue = (100, 100, 255)
