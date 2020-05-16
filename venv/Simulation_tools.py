@@ -109,5 +109,4 @@ class Simulation:
         acc_x = Force_x / self.Spaceship.Mass
         acc_y = Force_y / self.Spaceship.Mass
         self.updateSpaceShip(self.Spaceship, acc_x, acc_y, omega, self.step)
-        self.Spaceship.compute_distance(pList[0])
                 

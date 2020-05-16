@@ -92,7 +92,7 @@ class Game_Map:
         self.Sun.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
         self.Mars.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.red)
         #self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
-        self.SpaceShip.draw_trajectory(min_res, screen, Scale, self.x_offset, self.y_offset, self.yellow, 50)
+        self.SpaceShip.draw_trajectory(min_res, screen, Scale, self.x_offset, self.y_offset, self.yellow, 50, self.Sun)
         self.SpaceShip.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
