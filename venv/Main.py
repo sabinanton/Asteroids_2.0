@@ -13,7 +13,6 @@ def controls(event, Map):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
         Map.SpaceShip.T_accelerate(0.03, Map.step)
-        print("ACC")
     if keys[pygame.K_d]:
         Map.SpaceShip.Rotate(-1, 1/2000000)
     if keys[pygame.K_a]:

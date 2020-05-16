@@ -150,7 +150,7 @@ class SpaceShip:
                 r = trajectory[0]/(1 - trajectory[1]*math.cos(i*step-trajectory[2]))
                 point = conv(scale, resolution, r*math.cos(i*step), r*math.sin(i*step), x_offset, y_offset)
                 pts.append(point)
-        pygame.draw.polygon(screen, color, pts, 2)
+        pygame.draw.polygon(screen, color, pts, 1)
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         L_body = 10 * self.scale * game_scale

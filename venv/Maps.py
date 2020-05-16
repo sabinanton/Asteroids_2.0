@@ -70,7 +70,7 @@ class Game_Map:
         self.Sun.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         self.Mars.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.red)
         #self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
-        #self.SpaceShip.draw_trajectory(resolution, screen, self.scale, self.x_offset, self.y_offset, self.yellow, 200)
+        self.SpaceShip.draw_trajectory(resolution, screen, self.scale, self.x_offset, self.y_offset, self.yellow, 800, self.Sun)
         self.SpaceShip.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
