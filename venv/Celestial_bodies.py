@@ -2,6 +2,7 @@ import math
 import pygame
 import Constants
 import random
+import numpy as np
 
 def conv(scale, res, x, y, x_offset, y_offset):
     return (int(scale*x+res[0]/2 + x_offset), int(res[1]/2-scale*y + y_offset))
@@ -60,7 +61,7 @@ class Asteroid:
 
     def generatePoints(self):
         points = []
-        offset = 80000000
+        offset = 190000000
         n_of_points = random.randint(5, 16)
         angle_step = 2 * math.pi / n_of_points
         for i in range(n_of_points):
@@ -92,6 +93,7 @@ class SpaceShip:
     tetha = 0
     omega = 0
     scale = 1
+    trajectory = []
     Engine_fired = False
     Left_stube_fired = False
     Right_stube_fired = False
@@ -109,6 +111,7 @@ class SpaceShip:
         self.Engine_fired = False
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
+        self.trajectory = []
 
 
     def T_accelerate(self, acc, Step):
@@ -125,6 +128,40 @@ class SpaceShip:
         self.Left_stube_fired = dir
         self.Right_stube_fired = -dir
 
+    def compute_distance(self, object):
+        r = math.sqrt((self.pos_y - object.pos_y)**2 + (self.pos_x - object.pos_x)**2)
+        theta = math.atan2(self.pos_y - object.pos_y, self.pos_x - object.pos_x)
+        self.trajectory.append([r, theta])
+        if len(self.trajectory) > 35: self.trajectory.pop(0)
+
+    def compute_trajectory(self):
+        if len(self.trajectory) >= 35:
+            a = []
+            b = []
+            tr = self.trajectory
+            for i in range(len(tr)):
+                a.append([1, tr[i][0]*math.cos(tr[i][1]), tr[i][0]*math.sin(tr[i][1])])
+                b.append([tr[i][0]])
+            A = np.array(a)
+            A_T = np.transpose(A)
+            B = np.array(b)
+            res = np.linalg.inv(A_T.dot(A)).dot(A_T.dot(B))
+            phi = math.atan2(res[2], res[1])
+            e = res[1]/(math.cos(phi))
+            print(e)
+            return [res[0], e, phi]
+
+    def draw_trajectory(self, resolution, screen, scale, x_offset, y_offset, color, samples):
+        pts = []
+        N = samples
+        step = 2*math.pi/N
+        trajectory = self.compute_trajectory()
+        if trajectory != None:
+            for i in range(N):
+                r = trajectory[0]/(1 - trajectory[1]*math.cos(i*step-trajectory[2]))
+                point = conv(scale, resolution, r*math.cos(i*step), r*math.sin(i*step), x_offset, y_offset)
+                pts.append(point)
+            pygame.draw.polygon(screen, color, pts, 2)
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         L_body = 10 * self.scale * game_scale

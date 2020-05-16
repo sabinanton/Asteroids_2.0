@@ -104,12 +104,10 @@ class Simulation:
             gamma = angle(self.Spaceship.pos_x, self.Spaceship.pos_y, pList[j].pos_x, pList[j].pos_y)
             alpha = math.atan2(self.Spaceship.velocity_y, self.Spaceship.velocity_x)
             velocity = math.sqrt(self.Spaceship.velocity_x ** 2 + self.Spaceship.velocity_y ** 2)
-            #if pList[j].Name == "Earth": omega = (velocity) / d
-            #print(omega)
-            #if pList[j].Name == "Earth": omega += (self.Spaceship.velocity_x/dy - self.Spaceship.velocity_y/dx)
             Force_x += Force * math.cos(gamma)
             Force_y += Force * math.sin(gamma)
         acc_x = Force_x / self.Spaceship.Mass
         acc_y = Force_y / self.Spaceship.Mass
         self.updateSpaceShip(self.Spaceship, acc_x, acc_y, omega, self.step)
+        self.Spaceship.compute_distance(pList[0])
                 
