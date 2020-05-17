@@ -156,7 +156,7 @@ class SpaceShip:
         trajectory = self.compute_trajectory(object)
         if trajectory != None:
             for i in range(N):
-                r = trajectory[0]/(1 - trajectory[1]*math.cos(i*step - trajectory[2]))
+                r = abs(trajectory[0]/(1 - trajectory[1]*math.cos(i*step - trajectory[2])))
                 gamma = math.atan2(self.pos_y, self.pos_x)
                 print(math.sqrt((self.pos_x)**2 + (self.pos_y)**2))
                 point = conv(scale, resolution, r*math.cos(i*step), r*math.sin(i*step), x_offset, y_offset)

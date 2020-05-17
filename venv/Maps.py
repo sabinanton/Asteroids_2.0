@@ -15,7 +15,7 @@ class Game_Map:
         self.Sun = Celestial_bodies.Planet("Sun", 1.989 * 10 ** 30, 13926800000/2, 0, 0, 0, 0)
         self.Mars = Celestial_bodies.Planet("Mars", 6.39 * 10 ** 23, 338950000 * 5/2, 1.38 * Constants.AU, 0, 0, 26500)
         #self.Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**28, 699110000, 5.034*Constants.AU, 0, 0, 13720)
-        self.ast = self.generate_Asteroid_Belt(359115316000, 1385)
+        self.ast = self.generate_Asteroid_Belt(359115316000, 685)
         #self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 173700000 * 5, 147098070000 + 4844000000, 0, 0, 39051.33)
         self.sim = Simulation_tools.Simulation([self.Sun, self.Earth, self.Mars], self.ast, self.SpaceShip,  step)
         self.x_offset = 0
