@@ -128,17 +128,26 @@ class SpaceShip:
         self.Right_stube_fired = -dir
 
     def compute_trajectory(self, object):
-        gamma = math.atan2((self.velocity_y - object.velocity_y), (self.velocity_x - object.velocity_x)) - math.atan2((self.pos_y - object.pos_y), (self.pos_x - object.pos_x))
-        v = math.sqrt((self.velocity_x - object.velocity_x)**2 + (self.velocity_y - object.velocity_y)**2)
-        r = math.sqrt((self.pos_x - object.pos_x)**2 + (self.pos_y - object.pos_y)**2)
+        v = math.sqrt((self.velocity_x)**2 + (self.velocity_y)**2)
+        r = math.sqrt((self.pos_x)**2 + (self.pos_y)**2)
+        print(r)
+        H = (self.pos_x) * (self.velocity_y) - \
+            (self.pos_y) * (self.velocity_x)
+        gamma = math.atan2(self.velocity_y, self.velocity_x) - math.atan2(self.pos_y, self.pos_x)
         v_r = v*math.cos(gamma)
-        v_t = v*math.sin(gamma)
-        p = (r*v_t)**2/Constants.a_sun
-        v0 = math.sqrt(Constants.a_sun/p)
+        v_t = abs(v*H/(v*r))
+        p = (H)**2/(Constants.m_sun*Constants.G)
+        v0 = math.sqrt(Constants.G * Constants.m_sun/p)
         theta = math.atan2(v_r/v0, v_t/v0 - 1)
-        e = v_r/v0/math.sin(theta)
-        phi = math.atan2((self.pos_y - object.pos_y), (self.pos_x - object.pos_x)) - theta
-        return [p, e, phi + math.pi]
+        #print(gamma * 180 / math.pi, theta*180/math.pi)
+        e = (v_t/v0 - 1)/math.cos(theta)
+
+        if H<0: theta = -theta
+        phi = math.atan2((self.pos_y), (self.pos_x)) - theta + math.pi
+        #print(p/(1-e*math.cos(theta)), r)
+        #print(theta)
+        #print(round(phi*180/math.pi), round((math.atan2((self.pos_y - object.pos_y)*180/math.pi, (self.pos_x - object.pos_x))*180/math.pi), round(theta*180/math.pi)))
+        return [p, e, phi]
 
     def draw_trajectory(self, resolution, screen, scale, x_offset, y_offset, color, samples, object):
         pts = []
@@ -147,10 +156,14 @@ class SpaceShip:
         trajectory = self.compute_trajectory(object)
         if trajectory != None:
             for i in range(N):
-                r = trajectory[0]/(1 - trajectory[1]*math.cos(i*step-trajectory[2]))
+                r = trajectory[0]/(1 - trajectory[1]*math.cos(i*step - trajectory[2]))
+                gamma = math.atan2(self.pos_y, self.pos_x)
+                print(math.sqrt((self.pos_x)**2 + (self.pos_y)**2))
                 point = conv(scale, resolution, r*math.cos(i*step), r*math.sin(i*step), x_offset, y_offset)
                 pts.append(point)
-        pygame.draw.polygon(screen, color, pts, 1)
+        try: pygame.draw.polygon(screen, color, pts, 1)
+        except: "TypeError: points must be number pairs"
+
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         L_body = 10 * self.scale * game_scale
