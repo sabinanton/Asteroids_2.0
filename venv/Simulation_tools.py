@@ -17,6 +17,7 @@ class Simulation:
         self.step = stp
         self.planetList = pList
         self.asteroidList = aList
+        self.particleList = []
         self.Spaceship = Spaceship
 
     def updatePlanet(self, body, ax, ay, Step):
@@ -70,6 +71,19 @@ class Simulation:
         body.pos_x = x
         body.pos_y = y
 
+    def updateParticle(self, body, ax, ay, Step):
+        vx = body.velocity_x + ax * Step
+        vy = body.velocity_y + ay * Step
+        x = body.pos_x + vx * Step
+        y = body.pos_y + vy * Step
+        body.acceleration_x = ax
+        body.acceleration_y = ay
+        body.velocity_x = vx
+        body.velocity_y = vy
+        body.pos_x = x
+        body.pos_y = y
+        body.life -= 1
+
     def collision(self, missile, asteroid):
         N_pieces = random.randint(4, 7)
         x = asteroid.pos_x
@@ -78,17 +92,29 @@ class Simulation:
         vy = asteroid.velocity_y
         ratio = missile.Mass/asteroid.Mass*50
         for i in range(N_pieces):
-            v_x = vx + random.uniform(vx*ratio/3*2, vx*ratio) * random.choice([-1, 1])
-            v_y = vy + random.uniform(vx*ratio/3*2, vy*ratio) * random.choice([-1, 1])
+            tetha = random.uniform(0, 2*math.pi)
+            v = math.sqrt(vx**2 + vy**2) * random.uniform(0.7, 1.4)
+            v_x = v * math.cos(tetha)
+            v_y = v * math.sin(tetha)
             x_i = x + random.uniform(-asteroid.Radius, asteroid.Radius)
             y_i = y + random.uniform(-asteroid.Radius, asteroid.Radius)
             omega = asteroid.omega * random.uniform(-1.2, 1.2)
-            debree = Celestial_bodies.Asteroid("debree" + str(i), asteroid.Mass/N_pieces, asteroid.Radius/N_pieces, x_i, y_i, v_x, v_y, asteroid.tetha, omega)
+            debree = Celestial_bodies.Asteroid("debree" + str(i), asteroid.Mass/N_pieces, asteroid.Radius/(N_pieces-1), x_i, y_i, v_x, v_y, asteroid.tetha, omega)
             self.asteroidList.append(debree)
+        for i in range(N_pieces*10):
+            tetha = random.uniform(0, 2*math.pi)
+            v = math.sqrt(vx**2 + vy**2) * random.uniform(0.7, 1.4)
+            v_x = v * math.cos(tetha)
+            v_y = v * math.sin(tetha)
+            x_i = x + random.uniform(-asteroid.Radius, asteroid.Radius)
+            y_i = y + random.uniform(-asteroid.Radius, asteroid.Radius)
+            debree1 = Celestial_bodies.Particle(140 + random.randint(-20, 20), x_i, y_i, v_x, v_y)
+            self.particleList.append(debree1)
         asteroid = None
     def simulate(self):
         pList = self.planetList
         aList = self.asteroidList
+        parList = self.particleList
         for i in range(len(pList)):
             Force_x = 0
             Force_y = 0
@@ -163,5 +189,12 @@ class Simulation:
                         self.Spaceship.pos_y)
             if d > 300000000000:
                 remove.append(self.Spaceship.missiles[i])
+        compute = False
+        for i in range(len(parList)):
+            if parList[i].life>0:
+                self.updateParticle(parList[i], 0, 0, self.step)
+                compute = True
+        if compute == False: self.particleList = []
         for i in remove:
-            self.Spaceship.missiles.remove(i)
+            try: self.Spaceship.missiles.remove(i)
+            except: "ValueError: list.remove(x): x not in list"

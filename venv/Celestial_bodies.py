@@ -113,7 +113,7 @@ class SpaceShip:
         self.Engine_fired = False
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
-        self.Number_of_missiles = 30
+        self.Number_of_missiles = 60
         self.missiles = []
 
 
@@ -292,3 +292,26 @@ class Missile:
             body.append([pos[0] + body_points[i][0], pos[1] + body_points[i][1]])
         try: pygame.draw.polygon(screen, color, body, 3)
         except: "TypeError: points must be number pairs"
+
+class Particle:
+    life = 0
+    pos_x = 0
+    pos_y = 0
+    velocity_x = 0
+    velocity_y = 0
+    acceleration_x = 0
+    acceleration_y = 0
+
+    def __init__(self, life, pos_x, pos_y, v_x, v_y):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.velocity_x = v_x
+        self.velocity_y = v_y
+        self.acceleration_x = 0
+        self.acceleration_y = 0
+        self.life = life
+
+    def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
+        print("Noo")
