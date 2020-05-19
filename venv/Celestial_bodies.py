@@ -94,6 +94,8 @@ class SpaceShip:
     omega = 0
     scale = 1
     trajectory = []
+    Number_of_missiles = 3
+    missiles = []
     Engine_fired = False
     Left_stube_fired = False
     Right_stube_fired = False
@@ -111,6 +113,8 @@ class SpaceShip:
         self.Engine_fired = False
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
+        self.Number_of_missiles = 30
+        self.missiles = []
 
 
     def T_accelerate(self, acc, Step):
@@ -126,27 +130,33 @@ class SpaceShip:
         self.omega += dir*shot
         self.Left_stube_fired = dir
         self.Right_stube_fired = -dir
+    def fire_missile(self, speed):
+        if self.Number_of_missiles:
+            t = self.tetha + math.pi/2
+            x = self.pos_x + self.scale*10*math.cos(t)
+            y = self.pos_y + 10*self.scale*math.sin(t)
+            vx = self.velocity_x + speed*math.cos(t)
+            vy = self.velocity_y + speed*math.sin(t)
+            missile = Missile(x, y, vx, vy, self.tetha + math.pi, self.scale*1)
+            self.missiles.append(missile)
+            self.Number_of_missiles -= 1
 
     def compute_trajectory(self, object):
         v = math.sqrt((self.velocity_x)**2 + (self.velocity_y)**2)
         r = math.sqrt((self.pos_x)**2 + (self.pos_y)**2)
-        print(r)
-        H = (self.pos_x) * (self.velocity_y) - \
-            (self.pos_y) * (self.velocity_x)
+        H = (self.pos_x - object.pos_x) * (self.velocity_y) - \
+            (self.pos_y - object.pos_y) * (self.velocity_x)
         gamma = math.atan2(self.velocity_y, self.velocity_x) - math.atan2(self.pos_y, self.pos_x)
         v_r = v*math.cos(gamma)
         v_t = abs(v*H/(v*r))
         p = (H)**2/(Constants.m_sun*Constants.G)
         v0 = math.sqrt(Constants.G * Constants.m_sun/p)
         theta = math.atan2(v_r/v0, v_t/v0 - 1)
-        #print(gamma * 180 / math.pi, theta*180/math.pi)
+
         e = (v_t/v0 - 1)/math.cos(theta)
 
         if H<0: theta = -theta
         phi = math.atan2((self.pos_y), (self.pos_x)) - theta + math.pi
-        #print(p/(1-e*math.cos(theta)), r)
-        #print(theta)
-        #print(round(phi*180/math.pi), round((math.atan2((self.pos_y - object.pos_y)*180/math.pi, (self.pos_x - object.pos_x))*180/math.pi), round(theta*180/math.pi)))
         return [p, e, phi]
 
     def draw_trajectory(self, resolution, screen, scale, x_offset, y_offset, color, samples, object):
@@ -158,7 +168,6 @@ class SpaceShip:
             for i in range(N):
                 r = abs(trajectory[0]/(1 - trajectory[1]*math.cos(i*step - trajectory[2])))
                 gamma = math.atan2(self.pos_y, self.pos_x)
-                print(math.sqrt((self.pos_x)**2 + (self.pos_y)**2))
                 point = conv(scale, resolution, r*math.cos(i*step), r*math.sin(i*step), x_offset, y_offset)
                 pts.append(point)
         try: pygame.draw.polygon(screen, color, pts, 1)
@@ -244,3 +253,42 @@ class SpaceShip:
                 right_stube_fire.append([pos[0] + right_stube_fire_points[i][0], pos[1] + right_stube_fire_points[i][1]])
             pygame.draw.polygon(screen, color, right_stube_fire, 3)
             self.Right_stube_fired = 0
+
+class Missile:
+    Name = 'Planet'
+    Mass = 0
+    pos_x = 0
+    pos_y = 0
+    velocity_x = 0
+    velocity_y = 0
+    acceleration_x = 0
+    acceleration_y = 0
+    tetha = 0
+    omega = 0
+    scale = 1
+
+    def __init__(self, pos_x, pos_y, v_x, v_y, tetha, scale):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.velocity_x = v_x
+        self.velocity_y = v_y
+        self.tetha = tetha
+        self.omega = 0
+        self.acceleration_x = 0
+        self.acceleration_y = 0
+        self.Mass = 400000
+        self.scale = scale
+        self.Radius = 0
+
+    def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        t = self.tetha
+        L_body = 5*game_scale*self.scale
+        W_body = 1*game_scale*self.scale
+        body_points = [rotate(-W_body / 2, -L_body / 2, t), rotate(W_body / 2, -L_body / 2, t),
+                       rotate(W_body / 2, L_body / 2, t), rotate(0, L_body / 2 * 1.4, t), rotate(-W_body / 2, L_body / 2, t)]
+        body = []
+        pos = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        for i in range(5):
+            body.append([pos[0] + body_points[i][0], pos[1] + body_points[i][1]])
+        try: pygame.draw.polygon(screen, color, body, 3)
+        except: "TypeError: points must be number pairs"

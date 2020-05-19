@@ -21,6 +21,9 @@ def controls(event, Map):
         Map.SpaceShip.a_impulse(0.01, -1, Map.step)
     if keys[pygame.K_s]:
         Map.SpaceShip.a_impulse(0.01, 1, Map.step)
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_e:
+            Map.SpaceShip.fire_missile(40000)
 
 
 pygame.init()
@@ -32,7 +35,7 @@ screct = screen.get_rect()
 black = (0,0,0)
 running = True
 i=0
-map = Maps.Game_Map(1/30000000, 25555)
+map = Maps.Game_Map(1/30000000, 15555)
 mini_map_scale = 1/3000000000
 minimap_res = (300,300)
 while running :
