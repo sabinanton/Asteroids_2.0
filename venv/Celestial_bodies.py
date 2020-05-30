@@ -3,6 +3,7 @@ import pygame
 import Constants
 import random
 import numpy as np
+import  collections
 
 def conv(scale, res, x, y, x_offset, y_offset):
     return (int(scale*x+res[0]/2 + x_offset), int(res[1]/2-scale*y + y_offset))
@@ -95,10 +96,12 @@ class SpaceShip:
     scale = 1
     trajectory = []
     Number_of_missiles = 3
-    missiles = []
+    missiles = collections.deque([])
+    laser_length = 0
     Engine_fired = False
     Left_stube_fired = False
     Right_stube_fired = False
+    Laser_fired = False
 
     def __init__(self, name, m, x, y, vx, vy, tetha, omega, scale):
         self.Name = name
@@ -115,6 +118,8 @@ class SpaceShip:
         self.Right_stube_fired = 0
         self.Number_of_missiles = 60
         self.missiles = []
+        self.laser_length = 0
+        self.Laser_fired = False
 
 
     def T_accelerate(self, acc, Step):
@@ -185,11 +190,18 @@ class SpaceShip:
         l_stube = 3 * self.scale * game_scale
         blue = (200,200,255)
         t = self.tetha
+        laser_start_point = rotate(0, -L_body/2, t)
         body_points = [rotate(-D_body/2, -L_body/2, t), rotate(D_body/2, -L_body/2, t),
                        rotate(D_body/2, L_body/2, t), rotate(-D_body/2, L_body/2, t)]
         thrsuter_points = [rotate(0, L_body/2, t), rotate(-D_e/2, L_body/2 + l_e, t), rotate(D_e/2, L_body/2 + l_e, t)]
         body = []
         pos = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        laser_start = [pos[0] + laser_start_point[0], pos[1] + laser_start_point[1]]
+        l = self.laser_length * game_scale
+        T = -(t + math.pi/2)
+        if self.laser_length !=0 :pygame.draw.line(screen, color, laser_start,
+                                                [int(laser_start[0] + l * math.cos(T)), int(laser_start[1] + l * math.sin(T))])
+        #self.laser_length = 0
         for i in range(4):
            body.append([pos[0] + body_points[i][0], pos[1] + body_points[i][1]])
         pygame.draw.polygon(screen, color, body, 3)
@@ -278,7 +290,7 @@ class Missile:
         self.acceleration_y = 0
         self.Mass = 400000
         self.scale = scale
-        self.Radius = 0
+        self.Radius = 500000
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         t = self.tetha
@@ -314,4 +326,3 @@ class Particle:
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
-        print("Noo")

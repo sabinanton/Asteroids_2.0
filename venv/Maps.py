@@ -16,7 +16,7 @@ class Game_Map:
         self.Mars = Celestial_bodies.Planet("Mars", 6.39 * 10 ** 23, 338950000 * 5/2, 1.38 * Constants.AU, 0, 0, 26500)
         self.Particles = []
         #self.Jupiter = Celestial_bodies.Planet("Jupiter", 1.898*10**28, 699110000, 5.034*Constants.AU, 0, 0, 13720)
-        self.ast = self.generate_Asteroid_Belt(359115316000, 985)
+        self.ast = self.generate_Asteroid_Belt(359115316000, 1285)
         #self.Moon = Celestial_bodies.Planet("Moon", 7.34767 * 10 ** 22, 173700000 * 5, 147098070000 + 4844000000, 0, 0, 39051.33)
         self.sim = Simulation_tools.Simulation([self.Sun, self.Earth, self.Mars], self.ast, self.SpaceShip,  step)
         self.x_offset = 0
@@ -76,7 +76,6 @@ class Game_Map:
         for i in self.SpaceShip.missiles:
             i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         for i in self.sim.particleList:
-            print("yes")
             i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
@@ -100,6 +99,10 @@ class Game_Map:
         #self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
         self.SpaceShip.draw_trajectory(min_res, screen, Scale, self.x_offset ,self.y_offset , self.yellow, 100, self.Sun)
         self.SpaceShip.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
+        for i in self.sim.particleList:
+            i.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.map_white)
+        for i in self.SpaceShip.missiles:
+            i.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
         #self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
