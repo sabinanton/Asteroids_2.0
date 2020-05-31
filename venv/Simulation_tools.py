@@ -121,8 +121,8 @@ class Simulation:
         Alpha = 0
         arm = 0
         Distance = 0
-        Force_zero = 4 * 10**6
-        ast = None
+        Force_zero = 4 * 10**25
+        ast = 0
         if self.Spaceship.Laser_fired:
             self.Spaceship.laser_length = 3 * 10 ** 12
         else: self.Spaceship.laser_length = 0
@@ -166,7 +166,8 @@ class Simulation:
             spread = math.pi/6
             for i in range(N_particles):
                 tetha = random.uniform(T - spread , T + spread) + math.pi
-                v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.1, 0.5)
+
+                v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.6, 0.9)
                 v_x = vx + v * math.cos(tetha)
                 v_y = vy + v * math.sin(tetha)
                 debree1 = Celestial_bodies.Particle(30 + random.randint(-20, 20), x, y, v_x, v_y)
@@ -196,27 +197,26 @@ class Simulation:
             acc_x = Force_x / pList[i].Mass
             acc_y = Force_y / pList[i].Mass
             self.updatePlanet(pList[i], acc_x, acc_y, self.step)
-        for i in range(len(aList)):
+
+        for i in self.asteroidList:
             Force_x = 0
             Force_y = 0
             omega = 0
 
             for j in range(len(pList)):
 
-                d = distance(aList[i].pos_x, aList[i].pos_y, pList[j].pos_x, pList[j].pos_y)
-                if d < aList[i].Radius + aList[j].Radius:
-                    Force = -Constants.G * aList[i].Mass * pList[j].Mass / d ** 2
-                else:
-                    Force = Constants.G * aList[i].Mass * pList[j].Mass / d ** 2
-                gamma = angle(aList[i].pos_x, aList[i].pos_y, pList[j].pos_x, pList[j].pos_y)
-                alpha = math.atan2(aList[i].velocity_y, aList[i].velocity_x)
-                velocity = math.sqrt(aList[i].velocity_x ** 2 + aList[i].velocity_y ** 2)
-                omega += (velocity * math.cos(alpha - gamma + math.pi / 2)) / d
-                Force_x += Force * math.cos(gamma)
-                Force_y += Force * math.sin(gamma)
-            acc_x = Force_x / aList[i].Mass
-            acc_y = Force_y / aList[i].Mass
-            self.updateAsteroid(aList[i], acc_x, acc_y, omega, self.step)
+                d = distance(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
+                if d < i.Radius + pList[j].Radius: Force = -Constants.G*i.Mass*pList[j].Mass/d**2
+                else: Force = Constants.G*i.Mass*pList[j].Mass/d**2
+                gamma = angle(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
+                alpha = math.atan2(i.velocity_y, i.velocity_x)
+                velocity = math.sqrt(i.velocity_x**2 + i.velocity_y**2)
+                omega += (velocity*math.cos(alpha-gamma+math.pi/2))/d
+                Force_x += Force*math.cos(gamma)
+                Force_y += Force*math.sin(gamma)
+            acc_x = Force_x / i.Mass
+            acc_y = Force_y / i.Mass
+            self.updateAsteroid(i, acc_x, acc_y, omega, self.step)
         omega = 0
         #if ang != 0: print(round(ang * 180 / math.pi))
         self.Spaceship.Laser_fired = False
@@ -242,35 +242,38 @@ class Simulation:
         acc_x = Force_x / self.Spaceship.Mass
         acc_y = Force_y / self.Spaceship.Mass
         self.updateSpaceShip(self.Spaceship, acc_x, acc_y, omega, self.step)
-        # print(self.Spaceship.missiles)
-        remove = []
-        for i in range(len(self.Spaceship.missiles)):
+        #print(self.Spaceship.missiles)
+        for i in self.Spaceship.missiles:
             Force_x = 0
             Force_y = 0
             for j in range(len(pList)):
-                d = distance(self.Spaceship.missiles[i].pos_x, self.Spaceship.missiles[i].pos_y, pList[j].pos_x,
-                             pList[j].pos_y)
-                Force = Constants.G * self.Spaceship.missiles[i].Mass * pList[j].Mass / d ** 2
-                gamma = angle(self.Spaceship.missiles[i].pos_x, self.Spaceship.missiles[i].pos_y, pList[j].pos_x,
-                              pList[j].pos_y)
+                d = distance(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
+                Force = Constants.G * i.Mass * pList[j].Mass / d ** 2
+                gamma = angle(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
                 Force_x += Force * math.cos(gamma)
                 Force_y += Force * math.sin(gamma)
-            acc_x = Force_x / self.Spaceship.missiles[i].Mass
-            acc_y = Force_y / self.Spaceship.missiles[i].Mass
-            self.updateMissile(self.Spaceship.missiles[i], acc_x, acc_y, 0, self.step)
-            for j in range(len(aList)):
-                if d < aList[j].Radius:
-                    self.collision(self.Spaceship.missiles[i], aList[j])
-                    remove.append(self.Spaceship.missiles[i])
-                    aList.remove(aList[j])
-                    self.asteroidList.remove(self.asteroidList[j])
-            d = distance(self.Spaceship.missiles[i].pos_x, self.Spaceship.missiles[i].pos_y, self.Spaceship.pos_x,
-                         self.Spaceship.pos_y)
+            acc_x = Force_x / i.Mass
+            acc_y = Force_y / i.Mass
+            self.updateMissile(i, acc_x, acc_y, 0, self.step)
+            for j in self.asteroidList:
+                d = distance(i.pos_x, i.pos_y, j.pos_x,
+                        j.pos_y)
+                if i in self.Spaceship.missiles and d < j.Radius + i.Radius:
+                    self.collision(i, j)
+                    self.Spaceship.missiles.remove(i)
+                    self.asteroidList.remove(j)
+            d = distance(i.pos_x, i.pos_y, self.Spaceship.pos_x,
+                        self.Spaceship.pos_y)
             if d > 300000000000:
-                remove.append(self.Spaceship.missiles[i])
-        for i in remove:
-            self.Spaceship.missiles.remove(i)
-
+                self.Spaceship.missiles.remove(i)
+        compute = False
+        for i in parList:
+            if i in parList and i.life > 0:
+                self.updateParticle(i, 0, 0, self.step)
+                compute = True
+            else:
+                parList.remove(i)
+        if compute == False: self.particleList = []
         self.collision_check()
         self.health_check()
 
