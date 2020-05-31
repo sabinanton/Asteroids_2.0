@@ -126,37 +126,59 @@ class Simulation:
         if self.Spaceship.Laser_fired:
             self.Spaceship.laser_length = 3 * 10 ** 12
         else: self.Spaceship.laser_length = 0
-        for i in self.asteroidList:
+        for i in range(len(self.asteroidList)):
             if self.Spaceship.Laser_fired:
                 #self.Spaceship.Laser_fired = False
-                d = distance(i.pos_x, i.pos_y, self.Spaceship.pos_x, self.Spaceship.pos_y)
-                phi = math.atan2(i.pos_y - self.Spaceship.pos_y, i.pos_x - self.Spaceship.pos_x)
+                d = distance(self.asteroidList[i].pos_x, self.asteroidList[i].pos_y, self.Spaceship.pos_x, self.Spaceship.pos_y)
+                phi = math.atan2(self.asteroidList[i].pos_y - self.Spaceship.pos_y, self.asteroidList[i].pos_x - self.Spaceship.pos_x)
                 alpha = phi - (self.Spaceship.tetha - math.pi/2) + math.pi
                 #if alpha < 0: alpha += math.pi * 2
                 if alpha > math.pi *2: alpha -= math.pi * 2
                 if alpha > math.pi : alpha = 2*math.pi - alpha
                 #print(180/math.pi * alpha)
                 R = d * math.sin(alpha)
-                if -math.pi /2 < alpha < math.pi/2 and abs(R) < i.Radius * 1.25:
-                    if self.Spaceship.laser_length > abs(d * math.cos(alpha) - i.Radius/4):
-                        self.Spaceship.laser_length = abs(d * math.cos(alpha) - i.Radius/4)
+                if -math.pi /2 < alpha < math.pi/2 and abs(R) < self.asteroidList[i].Radius * 1.25:
+                    if self.Spaceship.laser_length > abs(d * math.cos(alpha) - self.asteroidList[i].Radius/4):
+                        self.Spaceship.laser_length = abs(d * math.cos(alpha) - self.asteroidList[i].Radius/4)
                         Distance = d
-                        Angle = self.Spaceship.tetha + math.pi/2
+                        Angle = self.Spaceship.tetha
                         arm = R
                         ast = i
                         Alpha = alpha
                 #print(self.Spaceship.laser_length)
-        Force = Force_zero / Distance**2
-        Force_x = Force * math.cos(Angle)
-        Force_y = Force * math.sin(Angle)
-        Torque = arm * Force
-        if Alpha < 0: Torque = - Torque
-        
+        if self.Spaceship.Laser_fired:
+            Force = Force_zero / (Distance**2+1)
+            Force_x = Force * math.cos(self.Spaceship.tetha + math.pi/2)
+            Force_y = Force * math.sin(self.Spaceship.tetha + math.pi/2)
+            ax = Force_x / self.asteroidList[ast].Mass
+            ay = Force_y / self.asteroidList[ast].Mass
+            Torque = arm * Force
+            aa = Torque / (0.5 * self.asteroidList[ast].Mass * self.asteroidList[ast].Radius**2)
+            if Alpha < 0: Torque = - Torque
+            print(ax, ay)
+            self.asteroidList[ast].accelerate(ax, ay, aa, self.step)
+            N_particles = int((30 + random.randint(-10, 30))/ ((Distance/11**10)**2+1))
+            T = (self.Spaceship.tetha + math.pi / 2)
+            x = self.Spaceship.pos_x + self.Spaceship.laser_length * math.cos(T)
+            y = self.Spaceship.pos_y + self.Spaceship.laser_length * math.sin(T)
+            vx = self.asteroidList[ast].velocity_x
+            vy = self.asteroidList[ast].velocity_y
+            spread = math.pi/6
+            for i in range(N_particles):
+                tetha = random.uniform(T - spread , T + spread) + math.pi
+                v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.1, 0.5)
+                v_x = vx + v * math.cos(tetha)
+                v_y = vy + v * math.sin(tetha)
+                debree1 = Celestial_bodies.Particle(30 + random.randint(-20, 20), x, y, v_x, v_y)
+                self.particleList.append(debree1)
+
         self.Spaceship.Laser_fired = False
 
     def simulate(self):
         pList = self.planetList
         aList = self.asteroidList
+        parList = self.particleList
+        self.simulate_laser()
         for i in range(len(pList)):
             Force_x = 0
             Force_y = 0
@@ -178,6 +200,7 @@ class Simulation:
             Force_x = 0
             Force_y = 0
             omega = 0
+
             for j in range(len(pList)):
 
                 d = distance(aList[i].pos_x, aList[i].pos_y, pList[j].pos_x, pList[j].pos_y)
@@ -195,6 +218,8 @@ class Simulation:
             acc_y = Force_y / aList[i].Mass
             self.updateAsteroid(aList[i], acc_x, acc_y, omega, self.step)
         omega = 0
+        #if ang != 0: print(round(ang * 180 / math.pi))
+        self.Spaceship.Laser_fired = False
         for j in range(len(pList)):
             d = distance(self.Spaceship.pos_x, self.Spaceship.pos_y, pList[j].pos_x, pList[j].pos_y)
 

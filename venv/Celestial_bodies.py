@@ -60,6 +60,14 @@ class Asteroid:
         self.omega = omega
         self.Points = self.generatePoints()
 
+    def accelerate(self, ax, ay, ang,  step):
+        self.velocity_x += ax * step
+        self.velocity_y += ay * step
+        self.omega += ang * step
+        #self.pos_x += self.velocity_x * step
+        #self.pos_y += self.velocity_y * step
+        #self.tetha += self.omega * step
+
     def generatePoints(self):
         points = []
         offset = 190000000
@@ -79,7 +87,8 @@ class Asteroid:
             t = self.tetha
             pts.append(conv(scale, resolution, self.Points[i][0]*math.cos(t)-self.Points[i][1]*math.sin(t) + self.pos_x, self.Points[i][1]*math.cos(t)+self.Points[i][0]*math.sin(t) + self.pos_y, x_offset, y_offset))
 
-        pygame.draw.polygon(screen, color, pts, 3)
+        try: pygame.draw.polygon(screen, color, pts, 3)
+        except : "TypeError: points must be number pairs"
 
 class SpaceShip:
     Name = 'Planet'
@@ -327,4 +336,6 @@ class Particle:
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
         p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
-        if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
+        try: 
+            if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
+        except: "OverflowError: Python int too large to convert to C long"
