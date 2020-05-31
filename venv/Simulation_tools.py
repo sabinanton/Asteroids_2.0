@@ -276,6 +276,7 @@ class Simulation:
         if compute == False: self.particleList = []
         self.collision_check()
         self.health_check()
+        self.deltaV()
 
     def collision_check(self):
         self.Spaceship.collision = False
@@ -308,3 +309,17 @@ class Simulation:
                     area_asteroid = math.pi * j.Radius ** 2
                     self.Spaceship.health -= 10 ** (-25) * (velocity_collision_asteroid * area_asteroid)
                     print(self.Spaceship.health)
+
+    def deltaV(self):
+        acc_sc = math.sqrt(self.Spaceship.acceleration_x ** 2 + self.Spaceship.acceleration_y ** 2)
+        if acc_sc > 0 and self.Spaceship.Engine_fired:
+            dV = acc_sc*self.step
+            self.Spaceship.deltaV -= 0.1*dV
+            self.Spaceship.deltaV = max(0,self.Spaceship.deltaV)
+            print(self.Spaceship.deltaV)
+
+        if acc_sc>0 and (self.Spaceship.Left_stube_fired or self.Spaceship.Right_stube_fired):
+            dV = acc_sc * self.step
+            self.Spaceship.deltaV -= 0.01 * dV
+            self.Spaceship.deltaV = max(0, self.Spaceship.deltaV)
+            print(self.Spaceship.deltaV)

@@ -131,6 +131,7 @@ class SpaceShip:
         self.Laser_fired = False
         self.collision = False
         self.health = 100
+        self.deltaV = 10000
 
 
     def T_accelerate(self, acc, Step):

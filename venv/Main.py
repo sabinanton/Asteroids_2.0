@@ -40,9 +40,13 @@ i=0
 map = Maps.Game_Map(1/30000000, 25555)
 mini_map_scale = 1/3000000000
 minimap_res = (300,300)
-health_bar_res = (minimap_res[0], int(0.05*resolution[1]))
+health_bar_res = (int((5/6)*minimap_res[0]), int(0.05*resolution[1]))
 health_bar_surface = pygame.Surface(health_bar_res)
 Health_bar = Display_Functions.health_display(health_bar_res,health_bar_surface)
+
+deltaV_bar_res = (int((5/6)*minimap_res[0]), int(0.05*resolution[1]))
+deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
+deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res,deltaV_bar_surface)
 
 while running :
     minimap = pygame.Surface(minimap_res)
@@ -52,7 +56,9 @@ while running :
     map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
     screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
     Health_bar.draw_health_bar(map.SpaceShip.health)
-    screen.blit(health_bar_surface, [0,resolution[1]-minimap_res[1]-health_bar_res[1]])
+    screen.blit(health_bar_surface, [minimap_res[0],resolution[1]-health_bar_res[1]])
+    deltaV_bar.draw_deltaV_bar(map.SpaceShip.deltaV)
+    screen.blit(deltaV_bar_surface, [int(minimap_res[0]+health_bar_res[0]), int(resolution[1] - deltaV_bar_res[1])])
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
