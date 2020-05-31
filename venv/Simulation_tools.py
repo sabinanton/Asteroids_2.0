@@ -167,7 +167,7 @@ class Simulation:
             for i in range(N_particles):
                 tetha = random.uniform(T - spread , T + spread) + math.pi
 
-                v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.6, 0.9)
+                v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.1, 0.5)
                 v_x = vx + v * math.cos(tetha)
                 v_y = vy + v * math.sin(tetha)
                 debree1 = Celestial_bodies.Particle(30 + random.randint(-20, 20), x, y, v_x, v_y)
