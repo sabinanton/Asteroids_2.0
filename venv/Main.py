@@ -5,6 +5,7 @@ from pygame import gfxdraw
 import Celestial_bodies
 import Constants
 import Simulation_tools, Maps
+import Display_Functions
 
 
 
@@ -39,6 +40,10 @@ i=0
 map = Maps.Game_Map(1/30000000, 25555)
 mini_map_scale = 1/3000000000
 minimap_res = (300,300)
+health_bar_res = (minimap_res[0], int(0.05*resolution[1]))
+health_bar_surface = pygame.Surface(health_bar_res)
+Health_bar = Display_Functions.health_display(health_bar_res,health_bar_surface)
+
 while running :
     minimap = pygame.Surface(minimap_res)
     map.update(map.SpaceShip)
@@ -46,6 +51,8 @@ while running :
     map.update_fixed_scale(map.Sun, mini_map_scale)
     map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
     screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
+    Health_bar.draw_health_bar(map.SpaceShip.health)
+    screen.blit(health_bar_surface, [0,resolution[1]-minimap_res[1]-health_bar_res[1]])
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

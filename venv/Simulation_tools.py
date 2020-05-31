@@ -236,7 +236,7 @@ class Simulation:
                          aList[j].pos_y)
             gamma = angle(aList[j].pos_x, aList[j].pos_y, self.Spaceship.pos_x, self.Spaceship.pos_y)
             if d < aList[j].Radius + 10 ** (2):
-                Force = -Constants.G * self.Spaceship.Mass * aList[j].Mass * 10 ** (19) / d ** 2
+                Force = -Constants.G * self.Spaceship.Mass * aList[j].Mass * 10 ** (17) / d ** 2
             Force_x += Force * math.cos(gamma)
             Force_y += Force * math.sin(gamma)
         acc_x = Force_x / self.Spaceship.Mass
