@@ -134,6 +134,8 @@ class SpaceShip:
         self.health = 100
         self.deltaV = 10000
         self.Radius = 6.5 * self.scale
+        self.hangar_angle = 60 * math.pi / 180
+        self.hangar_open = False
 
 
     def T_accelerate(self, acc, Step):
@@ -205,6 +207,7 @@ class SpaceShip:
         d_tube = 1 * self.scale * game_scale
         l_tube = 2.5 * self.scale * game_scale
         l_stube = 3 * self.scale * game_scale
+        hangar_door = int(3 * self.scale * game_scale)
         blue = (200,200,255)
         t = self.tetha
         laser_start_point = rotate(0, -L_body/2, t)
@@ -282,6 +285,26 @@ class SpaceShip:
                 right_stube_fire.append([pos[0] + right_stube_fire_points[i][0], pos[1] + right_stube_fire_points[i][1]])
             pygame.draw.polygon(screen, color, right_stube_fire, 3)
             self.Right_stube_fired = 0
+        hangar_door_1_points = [[0,0], rotate(0, hangar_door, self.hangar_angle)]
+        hangar_door_2_points = [[0,0], rotate(0, hangar_door, math.pi + self.hangar_angle)]
+        hangar_door_1 = [rotate(-D_body/2 + hangar_door_1_points[0][0], -L_body/2 - hangar_door_1_points[0][1], t),
+                         rotate(-D_body/2 + hangar_door_1_points[1][0], -L_body/2 - hangar_door_1_points[1][1], t)]
+        hangar_door_2 = [rotate(D_body / 2 + hangar_door_2_points[0][0], -L_body / 2 + hangar_door_2_points[0][1], t),
+                         rotate(D_body / 2 + hangar_door_2_points[1][0], -L_body / 2 + hangar_door_2_points[1][1], t)]
+        h1 = []
+        h2 = []
+        for i in range(2):
+            h1.append([pos[0] + hangar_door_1[i][0], pos[1] + hangar_door_1[i][1]])
+            h2.append([pos[0] + hangar_door_2[i][0], pos[1] + hangar_door_2[i][1]])
+        if self.hangar_open:
+            if self.hangar_angle > -60 * math.pi / 180:
+                self.hangar_angle -= 3 * math.pi / 180
+        else:
+            if self.hangar_angle < 60 * math.pi / 180:
+                self.hangar_angle += 3 * math.pi / 180
+        pygame.draw.line(screen, color, h1[0], h1[1], 4)
+        pygame.draw.line(screen, color, h2[0], h2[1], 4)
+            
 
 class Missile:
     Name = 'Planet'

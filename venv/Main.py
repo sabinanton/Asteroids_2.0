@@ -28,6 +28,7 @@ def controls(event, Map):
         if Map.SpaceShip.blackhole >0:
             Map.sim.blackhole = Celestial_bodies.BlackHole(Map.SpaceShip.pos_x, Map.SpaceShip.pos_y, 0, 15 * 10**8)
             Map.SpaceShip.blackhole -= 1
+
     
 pygame.init()
 
@@ -91,6 +92,8 @@ while running :
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e:
                 map.SpaceShip.fire_missile(40000)
+            if event.key == pygame.K_h:
+                map.SpaceShip.hangar_open = not map.SpaceShip.hangar_open
     controls(event, map)
 
 
