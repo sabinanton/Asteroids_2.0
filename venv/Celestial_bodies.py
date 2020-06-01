@@ -126,27 +126,32 @@ class SpaceShip:
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
         self.Number_of_missiles = 60
+        self.blackhole = 1
         self.missiles = []
         self.laser_length = 0
         self.Laser_fired = False
         self.collision = False
         self.health = 100
         self.deltaV = 10000
+        self.Radius = 6.5 * self.scale
 
 
     def T_accelerate(self, acc, Step):
-        self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
-        self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
-        self.Engine_fired = True
+        if self.deltaV > 0:
+            self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
+            self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
+            self.Engine_fired = True
     def a_impulse(self, acc, dir, Step):
-        self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
-        self.velocity_y += -dir * acc * math.sin(self.tetha + math.pi / 2) * Step
-        self.Left_stube_fired = dir
-        self.Right_stube_fired = dir
+        if self.deltaV > 0:
+            self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
+            self.velocity_y += -dir * acc * math.sin(self.tetha + math.pi / 2) * Step
+            self.Left_stube_fired = dir
+            self.Right_stube_fired = dir
     def Rotate(self, dir, shot):
-        self.omega += dir*shot
-        self.Left_stube_fired = dir
-        self.Right_stube_fired = -dir
+        if self.deltaV > 0:
+            self.omega += dir*shot
+            self.Left_stube_fired = dir
+            self.Right_stube_fired = -dir
     def fire_missile(self, speed):
         if self.Number_of_missiles:
             t = self.tetha + math.pi/2
@@ -340,3 +345,28 @@ class Particle:
         try: 
             if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
         except: "OverflowError: Python int too large to convert to C long"
+
+class BlackHole:
+    Mass = 0
+    pos_x = 0
+    pos_y = 0
+    bake_time = 5000
+    Radius = 0
+
+    def __init__(self, x, y, mass, radius):
+        self.pos_x = x
+        self.pos_y = y
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.acceleration_x = 0
+        self.acceleration_y = 0
+        self.Mass = mass
+        self.Radius = radius
+        self.bake_time = 200
+
+    def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        try:
+            pygame.draw.circle(screen, color, [p[0], p[1]], max(2,int(self.Radius * game_scale)), 1)
+        except:
+            "OverflowError: Python int too large to convert to C long"

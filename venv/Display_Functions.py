@@ -1,5 +1,5 @@
 import pygame
-from PIL import Image, ImageDraw
+
 
 
 class health_display:
@@ -15,9 +15,11 @@ class health_display:
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
         health_bar = pygame.Rect(
             [int(0.25 * self.Resolution[0] + 6), 6, int(0.75 * self.Resolution[0] - 12), self.Resolution[1] - 12])
-        life_bar = pygame.Rect(
+        life_bar = pygame.Rect([0,0,0,0])
+        try: life_bar = pygame.Rect(
             [int(0.25 * self.Resolution[0] + 6), 6, int((0.75 * self.Resolution[0] - 12) * (health / 100)),
              self.Resolution[1] - 12])
+        except: "TypeError: Argument must be rect style object"
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         pygame.draw.rect(self.Surface, self.white, health_bar, 2)
@@ -32,9 +34,10 @@ class deltaV_display:
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.heart = pygame.image.load("Lib\\Asteroids_2_fuel_icon.png")
-        self.image = pygame.transform.scale(self.heart, (25, 25))
+        self.image = pygame.transform.scale(self.heart, (29, 29))
 
     def draw_deltaV_bar(self, deltaV):
+        print(self.Resolution[1])
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
         fuel_bar = pygame.Rect(
             [int(0.25 * self.Resolution[0] + 6), 6, int(0.75 * self.Resolution[0] - 12), self.Resolution[1] - 12])
@@ -46,3 +49,7 @@ class deltaV_display:
         pygame.draw.rect(self.Surface, self.white, fuel_bar, 2)
         pygame.draw.rect(self.Surface, self.white, tank_bar)
         self.Surface.blit(self.image, (25, 4))
+
+    def resize(self, res):
+        self.Resolution = res
+        self.Surface = pygame.Surface(self.Resolution)
