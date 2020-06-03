@@ -73,6 +73,8 @@ class Game_Map:
         #self.Moon.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         self.SpaceShip.draw_trajectory(resolution, screen, self.scale, self.x_offset, self.y_offset, self.yellow, 800, self.Sun)
         self.SpaceShip.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
+        if self.sim.blackhole:
+            self.sim.blackhole.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.map_white)
         for i in self.SpaceShip.missiles:
             i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         for i in self.sim.particleList:
@@ -99,6 +101,8 @@ class Game_Map:
         #self.Moon.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.white)
         self.SpaceShip.draw_trajectory(min_res, screen, Scale, self.x_offset ,self.y_offset , self.yellow, 100, self.Sun)
         self.SpaceShip.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
+        if self.sim.blackhole:
+            self.sim.blackhole.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.white)
         for i in self.sim.particleList:
             i.draw(min_res, screen, Scale, self.x_offset, self.y_offset, self.map_white)
         for i in self.SpaceShip.missiles:
