@@ -24,6 +24,8 @@ def controls(event, Map):
         Map.SpaceShip.a_impulse(0.01, 1, Map.step)
     if keys[pygame.K_r]:
         Map.SpaceShip.Laser_fired = True
+    if keys[pygame.K_e]:
+        Map.SpaceShip.Missile_fired = True
     
 
 
@@ -48,6 +50,10 @@ deltaV_bar_res = (int((5/6)*minimap_res[0]), int(0.05*resolution[1]))
 deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
 deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res,deltaV_bar_surface)
 
+missiles_bar_res = (int((5/6)*minimap_res[0]), int(0.05*resolution[1]))
+missiles_bar_surface = pygame.Surface(missiles_bar_res)
+missiles_bar = Display_Functions.missiles_display(missiles_bar_res,missiles_bar_surface)
+
 while running :
     minimap = pygame.Surface(minimap_res)
     map.update(map.SpaceShip)
@@ -59,6 +65,8 @@ while running :
     screen.blit(health_bar_surface, [minimap_res[0],resolution[1]-health_bar_res[1]])
     deltaV_bar.draw_deltaV_bar(map.SpaceShip.deltaV)
     screen.blit(deltaV_bar_surface, [int(minimap_res[0]+health_bar_res[0]), int(resolution[1] - deltaV_bar_res[1])])
+    missiles_bar.draw_missiles_bar(map.SpaceShip.Number_of_missiles)
+    screen.blit(missiles_bar_surface, [int(minimap_res[0] + health_bar_res[0] + missiles_bar_res[0]), int(resolution[1] - missiles_bar_res[1])])
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

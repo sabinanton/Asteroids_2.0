@@ -126,7 +126,7 @@ class SpaceShip:
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
         self.Number_of_missiles = 60
-        self.missiles = []
+        self.Missile_fired = False
         self.laser_length = 0
         self.Laser_fired = False
         self.collision = False
