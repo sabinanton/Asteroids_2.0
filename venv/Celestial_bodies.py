@@ -150,6 +150,8 @@ class SpaceShip:
         self.hangar_open = False
         self.Minerals = 0
         self.Laser_power = 100
+        self.velocity = math.sqrt(self.velocity_x**2+self.velocity_y**2)
+        self.acceleration = math.sqrt(self.acceleration_x**2 + self.acceleration_y**2)
 
 
     def T_accelerate(self, Thrust, Step):

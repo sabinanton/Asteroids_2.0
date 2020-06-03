@@ -314,7 +314,6 @@ class Simulation:
                         j.pos_y) <= self.Spaceship.Radius + j.Radius and abs(self.Spaceship.velocity_x - j.velocity_x) >50\
                     and abs(self.Spaceship.velocity_y - j.velocity_y) > 50:
                 self.Spaceship.collision = True
-                self.Spaceship.collision = True
                 e = 0.65
                 alpha = math.atan2(j.pos_y - self.Spaceship.pos_y, j.pos_x - self.Spaceship.pos_x)
                 phi = math.atan2(self.Spaceship.velocity_y, self.Spaceship.velocity_x)

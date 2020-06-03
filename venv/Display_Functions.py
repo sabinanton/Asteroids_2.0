@@ -1,5 +1,5 @@
 import pygame
-
+import Constants
 
 class health_display:
     def __init__(self, resolution, surface):
@@ -18,12 +18,12 @@ class health_display:
             life_bar = pygame.Rect(
             [int(0.15 * self.Resolution[0] + 6), 6, int((0.85 * self.Resolution[0] - 12) * (health / 100)),
              int(self.Resolution[1] - 12)])
+            pygame.draw.rect(self.Surface, self.black, background)
+            pygame.draw.rect(self.Surface, self.white, background, 2)
+            pygame.draw.rect(self.Surface, self.white, health_bar, 2)
+            pygame.draw.rect(self.Surface, self.white, life_bar)
+            self.Surface.blit(self.image, (10, 4))
         except: "TypeError: Argument must be rect style object"
-        pygame.draw.rect(self.Surface, self.black, background)
-        pygame.draw.rect(self.Surface, self.white, background, 2)
-        pygame.draw.rect(self.Surface, self.white, health_bar, 2)
-        pygame.draw.rect(self.Surface, self.white, life_bar)
-        self.Surface.blit(self.image, (10, 4))
 
 
 class deltaV_display:
@@ -108,3 +108,47 @@ class black_hole_display:
         pygame.draw.rect(self.Surface, self.white, background, 2)
         pygame.draw.circle(self.Surface, self.white, (30, 20), 15, 2)
         self.Surface.blit(text_surface, (55, 12))
+
+class sc_info_display:
+    def __init__(self,resolution,surface):
+        self.Resolution = resolution
+        self.Surface = surface
+        self.black = (0,0,0)
+        self.white = (255,255,255)
+        self.name = ""
+        self.velocity = 0
+        self.acceleration = 0
+        self.distance_from_Earth = 0
+        self.distance_from_Sun = 0
+
+    def draw_sc_info(self):
+        n=6
+        background = pygame.Rect([0,0,self.Resolution[0],self.Resolution[1]])
+        pygame.draw.rect(self.Surface, self.black, background)
+        pygame.draw.rect(self.Surface, self.white, background, 2)
+        font = pygame.font.SysFont("Consolas", 12)
+        name_text_line = "Name of Spacecraft: " + str(self.name)
+        name_text_surface = font.render(name_text_line, True, self.white)
+        self.Surface.blit(name_text_surface, (((self.Resolution[0]-font.size(name_text_line)[0])/2), (self.Resolution[1]/n)))
+        velocity_text_line = "Current velocity: " + str(self.velocity) + " [km/s]"
+        velocity_text_surface = font.render(velocity_text_line, True, self.white)
+        self.Surface.blit(velocity_text_surface, (((self.Resolution[0]-font.size(velocity_text_line)[0])/2), (self.Resolution[1]*2/n)))
+        acceleration_text_line = "Current Acceleration: " + str(self.acceleration) + " [km/s^2]"
+        acceleration_text_surface = font.render(acceleration_text_line, True, self.white)
+        self.Surface.blit(acceleration_text_surface, (((self.Resolution[0]-font.size(acceleration_text_line)[0])/2), (self.Resolution[1]*3/n)))
+        distance_from_Earth_text_line = "Distance from Earth: " + str(self.distance_from_Earth) + " [AU]"
+        distance_from_Earth_text_surface = font.render(distance_from_Earth_text_line, True, self.white)
+        self.Surface.blit(distance_from_Earth_text_surface, (((self.Resolution[0]-font.size(distance_from_Earth_text_line)[0])/2), (self.Resolution[1]*4/n)))
+        distance_from_Sun_text_line = "Distance from Sun: " + str(self.distance_from_Sun) + " [AU]"
+        distance_from_Sun_text_surface = font.render(distance_from_Sun_text_line, True, self.white)
+        self.Surface.blit(distance_from_Sun_text_surface, (((self.Resolution[0]-font.size(distance_from_Sun_text_line)[0])/2), (self.Resolution[1]*5/n)))
+
+    def update_sc_info(self,name,velocity,acceleration,distance_from_Earth,distance_from_Sun):
+        self.name = name
+        self.velocity = round(velocity/1000,1)
+        self.acceleration = round(acceleration,4)
+        self.distance_from_Earth = round(distance_from_Earth/Constants.AU,2)
+        self.distance_from_Sun = round(distance_from_Sun/Constants.AU,2)
+
+
+

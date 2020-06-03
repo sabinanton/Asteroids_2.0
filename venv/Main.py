@@ -28,9 +28,6 @@ def controls(event, Map):
         Map.SpaceShip.Laser_fired = False
     if keys[pygame.K_e]:
         Map.SpaceShip.Missile_fired = True
-    
-
-
 
 pygame.init()
 
@@ -64,9 +61,14 @@ black_hole_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
 black_hole_bar_surface = pygame.Surface(black_hole_bar_res)
 black_hole_bar = Display_Functions.black_hole_display(black_hole_bar_res,black_hole_bar_surface)
 
+spacecraft_bar_res = (abs(resolution[0]-minimap_res[0]-health_bar_res[0]-deltaV_bar_res[0]-missiles_bar_res[0]-laser_bar_res[0]-black_hole_bar_res[0]), int(0.5*resolution[1]))
+spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
+spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res,spacecraft_bar_surface)
+
 while running :
     minimap = pygame.Surface(minimap_res)
     map.update(map.SpaceShip)
+    spacecraft_bar.update_sc_info(map.SpaceShip.Name,math.sqrt(map.SpaceShip.velocity_x**2 + map.SpaceShip.velocity_y**2),math.sqrt(map.SpaceShip.acceleration_x**2 + map.SpaceShip.acceleration_y**2),Simulation_tools.distance(map.Earth.pos_x,map.Earth.pos_y,map.SpaceShip.pos_x,map.SpaceShip.pos_y),Simulation_tools.distance(map.Sun.pos_x, map.Sun.pos_y, map.SpaceShip.pos_x,map.SpaceShip.pos_y))
     map.draw(resolution, screen)
     map.update_fixed_scale(map.Sun, mini_map_scale)
     map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
@@ -84,7 +86,10 @@ while running :
     screen.blit(black_hole_bar_surface,
                 [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]),
                  int(resolution[1]-black_hole_bar_res[1])])
-
+    spacecraft_bar.draw_sc_info()
+    screen.blit(spacecraft_bar_surface,
+                [abs(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]+black_hole_bar_res[0]),
+                 int(resolution[1]-spacecraft_bar_res[1])])
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -116,6 +121,11 @@ while running :
             black_hole_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
             black_hole_bar_surface = pygame.Surface(black_hole_bar_res)
             black_hole_bar = Display_Functions.black_hole_display(black_hole_bar_res, black_hole_bar_surface)
+            spacecraft_bar_res = (
+                        abs(resolution[0] - minimap_res[0] - health_bar_res[0] - deltaV_bar_res[0] - missiles_bar_res[0] - laser_bar_res[0] -
+                        black_hole_bar_res[0]), int(0.5*resolution[1]))
+            spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
+            spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
         if event.type == pygame.MOUSEBUTTONDOWN:
             scale_change = 0.9
             if event.button == 4:
