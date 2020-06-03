@@ -41,7 +41,7 @@ running = True
 i=0
 map = Maps.Game_Map(1/30000000, 25555)
 mini_map_scale = 1/3000000000
-minimap_res = (300,300)
+minimap_res = (int(300/1080 * resolution[1]),int(300/1080 * resolution[1]))
 health_bar_res = (int((5/6)*minimap_res[0]), int(0.05*resolution[1]))
 health_bar_surface = pygame.Surface(health_bar_res)
 Health_bar = Display_Functions.health_display(health_bar_res,health_bar_surface)
@@ -80,8 +80,15 @@ while running :
                 sys.exit()
         if event.type == pygame.VIDEORESIZE:
             resolution = (event.w, event.h)
+            minimap_res = (int(300 / 720 * resolution[1]), int(300 / 720 * resolution[1]))
             screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
             screct = screen.get_rect()
+            deltaV_bar_res = (int((5 / 6) * minimap_res[0]), int(0.05 * resolution[1]))
+            deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
+            deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res, deltaV_bar_surface)
+            health_bar_res = (int((5 / 6) * minimap_res[0]), int(0.05 * resolution[1]))
+            health_bar_surface = pygame.Surface(health_bar_res)
+            Health_bar = Display_Functions.health_display(health_bar_res, health_bar_surface)
         if event.type == pygame.MOUSEBUTTONDOWN:
             scale_change = 0.9
             if event.button == 4:
