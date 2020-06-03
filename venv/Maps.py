@@ -46,10 +46,13 @@ class Game_Map:
             vy = v * math.sin(angle) * random.uniform(0.95, 1.05)
             omega = random.uniform(-0.000005, 0.000005)
             mass = random.randint(50000, 100000000)
+            types = ["normal", "normal", "normal", "comet", "comet", "metals", "normal", "normal", "normal", "normal",
+                     "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+            Type = random.choice(types)
             # print(x,y)
             AstList.append(
                 Celestial_bodies.Asteroid("Ast" + str(num), mass, 350000000*2 + random.randint(-200000000*2, 300000000*2), x,
-                                          y, vx, vy, 0, omega))
+                                          y, vx, vy, 0, omega, Type))
             num += 1
         return AstList
 
@@ -78,11 +81,11 @@ class Game_Map:
         for i in self.SpaceShip.missiles:
             i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
         for i in self.sim.particleList:
-            i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, self.white)
+            i.draw(resolution, screen, self.scale, self.x_offset, self.y_offset, None)
         #self.Jupiter.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
-            j.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, self.white)
+            j.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, None)
 
     def draw_fixed_scale(self, min_res, window_res, screen, Scale, focus_object):
         screct = screen.get_rect()
@@ -110,5 +113,6 @@ class Game_Map:
         #self.Jupiter.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
         # self.Moon.draw(resolution,screen, x_offset, y_offset)
         for j in self.ast:
-            j.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
+            if j.Type == "normal": j.draw(min_res, screen, self.x_offset, self.y_offset, Scale, self.map_white)
+            else: j.draw(min_res, screen, self.x_offset, self.y_offset, Scale, None)
         pygame.draw.rect(screen, self.white, focusrect, 2)

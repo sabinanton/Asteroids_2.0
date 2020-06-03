@@ -48,7 +48,7 @@ class Asteroid:
     omega = 0
     Points = []
 
-    def __init__(self, name, m, r, x, y, vx, vy, tetha, omega):
+    def __init__(self, name, m, r, x, y, vx, vy, tetha, omega, type):
         self.Name = name
         self.Mass = m
         self.Radius = r
@@ -59,6 +59,14 @@ class Asteroid:
         self.tetha = tetha
         self.omega = omega
         self.Points = self.generatePoints()
+        self.Type = type
+        self.white = (255,255,255)
+        self.blue = (150, 150, 255)
+        self.red = (255, 130, 100)
+        self.map_white = (150, 150, 150)
+        self.black = (0, 0, 0)
+        self.green = (30, 255, 30)
+        self.yellow = (255, 255, 0)
 
     def accelerate(self, ax, ay, ang,  step):
         self.velocity_x += ax * step
@@ -82,6 +90,11 @@ class Asteroid:
 
     def draw(self, resolution, screen, x_offset, y_offset, scale, color):
         pts = []
+        if color == None:
+            if self.Type == "normal": color = self.white
+            if self.Type == "normal_map": color = self.map_white
+            if self.Type == "comet": color = self.blue
+            if self.Type == "metals": color = self.green
         white = (255, 255, 255)
         for i in range(len(self.Points)):
             t = self.tetha
@@ -126,27 +139,40 @@ class SpaceShip:
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
         self.Number_of_missiles = 60
-        self.Missile_fired = False
+        self.blackhole = 1
+        self.missiles = []
         self.laser_length = 0
         self.Laser_fired = False
         self.collision = False
         self.health = 100
         self.deltaV = 10000
+        self.Radius = 6.5 * self.scale
+        self.hangar_angle = 60 * math.pi / 180
+        self.hangar_open = False
+        self.Minerals = 0
 
 
-    def T_accelerate(self, acc, Step):
-        self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
-        self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
-        self.Engine_fired = True
-    def a_impulse(self, acc, dir, Step):
-        self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
-        self.velocity_y += -dir * acc * math.sin(self.tetha + math.pi / 2) * Step
-        self.Left_stube_fired = dir
-        self.Right_stube_fired = dir
-    def Rotate(self, dir, shot):
-        self.omega += dir*shot
-        self.Left_stube_fired = dir
-        self.Right_stube_fired = -dir
+    def T_accelerate(self, Thrust, Step):
+        acc = Thrust / self.Mass
+        if self.deltaV > 0:
+            self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
+            self.velocity_y += acc*math.sin(self.tetha + math.pi/2) * Step
+            self.Engine_fired = True
+            self.Mass -= 50
+    def a_impulse(self, Thrust, dir, Step):
+        acc = Thrust / self.Mass
+        if self.deltaV > 0:
+            self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
+            self.velocity_y += -dir * acc * math.sin(self.tetha + math.pi / 2) * Step
+            self.Left_stube_fired = dir
+            self.Right_stube_fired = dir
+            self.Mass -= 10
+    def Rotate(self, dir, Thrust):
+        shot = Thrust * 5 * self.scale / self.Mass
+        if self.deltaV > 0:
+            self.omega += dir*shot
+            self.Left_stube_fired = dir
+            self.Right_stube_fired = -dir
     def fire_missile(self, speed):
         if self.Number_of_missiles:
             t = self.tetha + math.pi/2
@@ -200,6 +226,7 @@ class SpaceShip:
         d_tube = 1 * self.scale * game_scale
         l_tube = 2.5 * self.scale * game_scale
         l_stube = 3 * self.scale * game_scale
+        hangar_door = int(3 * self.scale * game_scale)
         blue = (200,200,255)
         t = self.tetha
         laser_start_point = rotate(0, -L_body/2, t)
@@ -277,6 +304,26 @@ class SpaceShip:
                 right_stube_fire.append([pos[0] + right_stube_fire_points[i][0], pos[1] + right_stube_fire_points[i][1]])
             pygame.draw.polygon(screen, color, right_stube_fire, 3)
             self.Right_stube_fired = 0
+        hangar_door_1_points = [[0,0], rotate(0, hangar_door, self.hangar_angle)]
+        hangar_door_2_points = [[0,0], rotate(0, hangar_door, math.pi + self.hangar_angle)]
+        hangar_door_1 = [rotate(-D_body/2 + hangar_door_1_points[0][0], -L_body/2 - hangar_door_1_points[0][1], t),
+                         rotate(-D_body/2 + hangar_door_1_points[1][0], -L_body/2 - hangar_door_1_points[1][1], t)]
+        hangar_door_2 = [rotate(D_body / 2 + hangar_door_2_points[0][0], -L_body / 2 + hangar_door_2_points[0][1], t),
+                         rotate(D_body / 2 + hangar_door_2_points[1][0], -L_body / 2 + hangar_door_2_points[1][1], t)]
+        h1 = []
+        h2 = []
+        for i in range(2):
+            h1.append([pos[0] + hangar_door_1[i][0], pos[1] + hangar_door_1[i][1]])
+            h2.append([pos[0] + hangar_door_2[i][0], pos[1] + hangar_door_2[i][1]])
+        if self.hangar_open:
+            if self.hangar_angle > -60 * math.pi / 180:
+                self.hangar_angle -= 3 * math.pi / 180
+        else:
+            if self.hangar_angle < 60 * math.pi / 180:
+                self.hangar_angle += 3 * math.pi / 180
+        pygame.draw.line(screen, color, h1[0], h1[1], 4)
+        pygame.draw.line(screen, color, h2[0], h2[1], 4)
+            
 
 class Missile:
     Name = 'Planet'
@@ -326,7 +373,7 @@ class Particle:
     acceleration_x = 0
     acceleration_y = 0
 
-    def __init__(self, life, pos_x, pos_y, v_x, v_y):
+    def __init__(self, life, pos_x, pos_y, v_x, v_y, type):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.velocity_x = v_x
@@ -334,9 +381,47 @@ class Particle:
         self.acceleration_x = 0
         self.acceleration_y = 0
         self.life = life
+        self.Type = type
+        self.white = (255, 255, 255)
+        self.blue = (150, 150, 255)
+        self.red = (255, 130, 100)
+        self.map_white = (150, 150, 150)
+        self.black = (0, 0, 0)
+        self.green = (30, 255, 30)
+        self.yellow = (255, 255, 0)
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        if color == None:
+            if self.Type == "normal": color = self.white
+            if self.Type == "normal_map": color = self.map_white
+            if self.Type == "comet": color = self.blue
+            if self.Type == "metals": color = self.green
         p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         try: 
             if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)
         except: "OverflowError: Python int too large to convert to C long"
+
+class BlackHole:
+    Mass = 0
+    pos_x = 0
+    pos_y = 0
+    bake_time = 5000
+    Radius = 0
+
+    def __init__(self, x, y, mass, radius):
+        self.pos_x = x
+        self.pos_y = y
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.acceleration_x = 0
+        self.acceleration_y = 0
+        self.Mass = mass
+        self.Radius = radius
+        self.bake_time = 200
+
+    def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
+        try:
+            pygame.draw.circle(screen, color, [p[0], p[1]], max(2,int(self.Radius * game_scale)), 1)
+        except:
+            "OverflowError: Python int too large to convert to C long"

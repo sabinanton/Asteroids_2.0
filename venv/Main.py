@@ -13,15 +13,15 @@ import Display_Functions
 def controls(event, Map):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
-        Map.SpaceShip.T_accelerate(0.03, Map.step)
+        Map.SpaceShip.T_accelerate(12000000, Map.step)
     if keys[pygame.K_d]:
-        Map.SpaceShip.Rotate(-1, 1/2000000)
+        Map.SpaceShip.Rotate(-1, 4 * 10 **(-7))
     if keys[pygame.K_a]:
-        Map.SpaceShip.Rotate(1, 1/2000000)
+        Map.SpaceShip.Rotate(1, 4 * 10 **(-7))
     if keys[pygame.K_w]:
-        Map.SpaceShip.a_impulse(0.01, -1, Map.step)
+        Map.SpaceShip.a_impulse(4000000, -1, Map.step)
     if keys[pygame.K_s]:
-        Map.SpaceShip.a_impulse(0.01, 1, Map.step)
+        Map.SpaceShip.a_impulse(4000000, 1, Map.step)
     if keys[pygame.K_r]:
         Map.SpaceShip.Laser_fired = True
     if keys[pygame.K_e]:
