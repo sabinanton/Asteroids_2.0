@@ -109,7 +109,7 @@ class Simulation:
                 x_i = x + random.uniform(-asteroid.Radius, asteroid.Radius)
                 y_i = y + random.uniform(-asteroid.Radius, asteroid.Radius)
                 omega = asteroid.omega * random.uniform(-1.2, 1.2)
-                debree = Celestial_bodies.Asteroid("debree" + str(i), asteroid.Mass/N_pieces, asteroid.Radius/(N_pieces-1), x_i, y_i, v_x, v_y, asteroid.tetha, omega)
+                debree = Celestial_bodies.Asteroid("debree" + str(i), asteroid.Mass/N_pieces, asteroid.Radius/(N_pieces-1), x_i, y_i, v_x, v_y, asteroid.tetha, omega, asteroid.Type)
                 self.asteroidList.append(debree)
         for i in range(N_pieces*10):
             tetha = random.uniform(0, 2*math.pi)
@@ -118,7 +118,7 @@ class Simulation:
             v_y = v * math.sin(tetha)
             x_i = x + random.uniform(-asteroid.Radius, asteroid.Radius)
             y_i = y + random.uniform(-asteroid.Radius, asteroid.Radius)
-            debree1 = Celestial_bodies.Particle(140 + random.randint(-20, 20), x_i, y_i, v_x, v_y)
+            debree1 = Celestial_bodies.Particle(140 + random.randint(-20, 20), x_i, y_i, v_x, v_y, asteroid.Type)
             self.particleList.append(debree1)
         asteroid = None
 
@@ -152,7 +152,8 @@ class Simulation:
                         ast = i
                         Alpha = alpha
                 #print(self.Spaceship.laser_length)
-        if self.Spaceship.Laser_fired:
+        if self.Spaceship.Laser_fired and self.Spaceship.Laser_power > 0:
+            self.Spaceship.Laser_power = max(0,self.Spaceship.Laser_power)
             Force = Force_zero / (Distance**2+1)
             Force_x = Force * math.cos(self.Spaceship.tetha + math.pi/2)
             Force_y = Force * math.sin(self.Spaceship.tetha + math.pi/2)
@@ -170,16 +171,20 @@ class Simulation:
             vx = self.asteroidList[ast].velocity_x
             vy = self.asteroidList[ast].velocity_y
             spread = math.pi/6
+            self.Spaceship.Laser_power -= 0.0001*self.step
+            self.Spaceship.Laser_power = max(0,self.Spaceship.Laser_power)
+            print(self.Spaceship.Laser_power)
             for i in range(N_particles):
                 tetha = random.uniform(T - spread , T + spread) + math.pi
-
                 v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.1, 0.5)
                 v_x = vx + v * math.cos(tetha)
                 v_y = vy + v * math.sin(tetha)
                 debree1 = Celestial_bodies.Particle(30 + random.randint(-20, 20), x, y, v_x, v_y, self.asteroidList[ast].Type)
                 self.particleList.append(debree1)
+        elif self.Spaceship.Laser_fired == False and self.Spaceship.Laser_power<100:
+            self.Spaceship.Laser_power += 0.00005*self.step
 
-        self.Spaceship.Laser_fired = False
+        print(self.Spaceship.Laser_fired, self.Spaceship.Laser_power)
 
     def simulate(self):
         pList = self.planetList
@@ -225,7 +230,7 @@ class Simulation:
             self.updateAsteroid(i, acc_x, acc_y, omega, self.step)
         omega = 0
         #if ang != 0: print(round(ang * 180 / math.pi))
-        self.Spaceship.Laser_fired = False
+        #self.Spaceship.Laser_fired = False
         for j in range(len(pList)):
             d = distance(self.Spaceship.pos_x, self.Spaceship.pos_y, pList[j].pos_x, pList[j].pos_y)
 
@@ -376,7 +381,7 @@ class Simulation:
                         (self.Spaceship.velocity_x - j.velocity_x) ** 2 + (
                                     self.Spaceship.velocity_y - j.velocity_y) ** 2)
                     area_asteroid = math.pi * j.Radius ** 2
-                    self.Spaceship.health -= 0.2 * 10 ** (-24) * (velocity_collision_asteroid * area_asteroid) / 2
+                    self.Spaceship.health -= 0.4 * 10 ** (-24) * (velocity_collision_asteroid * area_asteroid) / 2
                     print(self.Spaceship.health)
 
     def deltaV(self):

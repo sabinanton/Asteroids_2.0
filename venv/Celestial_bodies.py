@@ -120,7 +120,6 @@ class SpaceShip:
     Number_of_missiles = 3
     missiles = collections.deque([])
     laser_length = 0
-    Engine_fired = False
     Left_stube_fired = False
     Right_stube_fired = False
     Laser_fired = False
@@ -150,6 +149,7 @@ class SpaceShip:
         self.hangar_angle = 60 * math.pi / 180
         self.hangar_open = False
         self.Minerals = 0
+        self.Laser_power = 100
 
 
     def T_accelerate(self, Thrust, Step):
@@ -235,11 +235,15 @@ class SpaceShip:
         thrsuter_points = [rotate(0, L_body/2, t), rotate(-D_e/2, L_body/2 + l_e, t), rotate(D_e/2, L_body/2 + l_e, t)]
         body = []
         pos = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
-        laser_start = [pos[0] + laser_start_point[0], pos[1] + laser_start_point[1]]
-        l = self.laser_length * game_scale
-        T = -(t + math.pi/2)
-        if self.laser_length !=0 :pygame.draw.line(screen, color, laser_start,
+
+        if self.Laser_power>0:
+            laser_start = [pos[0] + laser_start_point[0], pos[1] + laser_start_point[1]]
+            l = self.laser_length * game_scale
+            T = -(t + math.pi/2)
+            if self.laser_length !=0 :pygame.draw.line(screen, color, laser_start,
                                                 [int(laser_start[0] + l * math.cos(T)), int(laser_start[1] + l * math.sin(T))])
+
+
         #self.laser_length = 0
         for i in range(4):
            body.append([pos[0] + body_points[i][0], pos[1] + body_points[i][1]])
