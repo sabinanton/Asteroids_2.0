@@ -1,5 +1,6 @@
 import pygame
 import Constants
+import math
 
 class health_display:
     def __init__(self, resolution, surface):
@@ -8,7 +9,7 @@ class health_display:
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.heart = pygame.image.load("Lib\\Asteroids_2_health_icon (1).png")
-        self.image = pygame.transform.scale(self.heart, (25, 25))
+        self.image = pygame.transform.scale(self.heart, ((int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1]))))
 
     def draw_health_bar(self, health):
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
@@ -22,7 +23,7 @@ class health_display:
             pygame.draw.rect(self.Surface, self.white, background, 2)
             pygame.draw.rect(self.Surface, self.white, health_bar, 2)
             pygame.draw.rect(self.Surface, self.white, life_bar)
-            self.Surface.blit(self.image, (10, 4))
+            self.Surface.blit(self.image, (int(0.02*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
         except: "TypeError: Argument must be rect style object"
 
 
@@ -33,7 +34,7 @@ class deltaV_display:
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.heart = pygame.image.load("Lib\\Asteroids_2_fuel_icon.png")
-        self.image = pygame.transform.scale(self.heart, (25, 25))
+        self.image = pygame.transform.scale(self.heart, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_deltaV_bar(self, deltaV):
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
@@ -46,7 +47,7 @@ class deltaV_display:
         pygame.draw.rect(self.Surface, self.white, background, 2)
         pygame.draw.rect(self.Surface, self.white, fuel_bar, 2)
         pygame.draw.rect(self.Surface, self.white, tank_bar)
-        self.Surface.blit(self.image, (10, 10))
+        self.Surface.blit(self.image, (int(0.02*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
 
 
 class missiles_display:
@@ -56,7 +57,7 @@ class missiles_display:
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.missiles = pygame.image.load("Lib\\Asteroids_2_missle_icon.png")
-        self.image = pygame.transform.scale(self.missiles, (25, 25))
+        self.image = pygame.transform.scale(self.missiles, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_missiles_bar(self, Number_of_missiles):
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
@@ -65,8 +66,8 @@ class missiles_display:
         text_surface = font.render(text_line, True, self.white)
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
-        self.Surface.blit(text_surface, (40, 12))
-        self.Surface.blit(self.image, (10, 10))
+        self.Surface.blit(text_surface, (int(0.6*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
 
 
 class laser_display:
@@ -76,7 +77,7 @@ class laser_display:
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.heart = pygame.image.load("Lib\\Asteroids_2_laser_icon.png")
-        self.image = pygame.transform.scale(self.heart, (25, 25))
+        self.image = pygame.transform.scale(self.heart, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_laser_bar(self, laser):
         background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
@@ -89,7 +90,7 @@ class laser_display:
         pygame.draw.rect(self.Surface, self.white, background, 2)
         pygame.draw.rect(self.Surface, self.white, laser_bar, 2)
         pygame.draw.rect(self.Surface, self.white, device_bar)
-        self.Surface.blit(self.image, (10, 10))
+        self.Surface.blit(self.image, (int(0.02*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
 
 
 class black_hole_display:
@@ -106,8 +107,8 @@ class black_hole_display:
         text_surface = font.render(text_line, True, self.white)
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
-        pygame.draw.circle(self.Surface, self.white, (30, 20), 15, 2)
-        self.Surface.blit(text_surface, (55, 12))
+        pygame.draw.circle(self.Surface, self.white, (int(0.25*self.Resolution[0]), int(self.Resolution[1]/2)), int(0.4*self.Resolution[1]), 2)
+        self.Surface.blit(text_surface, (int(0.6*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
 
 class sc_info_display:
     def __init__(self,resolution,surface):
@@ -126,7 +127,7 @@ class sc_info_display:
         background = pygame.Rect([0,0,self.Resolution[0],self.Resolution[1]])
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
-        font = pygame.font.SysFont("Consolas", 12)
+        font = pygame.font.SysFont("Consolas", 14)
         name_text_line = "Spacecraft Name: " + str(self.name)
         name_text_surface = font.render(name_text_line, True, self.white)
         self.Surface.blit(name_text_surface, (((self.Resolution[0]-font.size(name_text_line)[0])/2), (self.Resolution[1]/n)))
@@ -150,5 +151,42 @@ class sc_info_display:
         self.distance_from_Earth = round(distance_from_Earth/Constants.AU,2)
         self.distance_from_Sun = round(distance_from_Sun/Constants.AU,2)
 
+class minerals_display:
+    def __init__(self, resolution, surface):
+        self.Resolution = resolution
+        self.Surface = surface
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
+        self.minerals = pygame.image.load("Lib\\Crystals_game2.png")
+        self.image = pygame.transform.scale(self.minerals, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
+
+    def draw_minerals_bar(self, minerals_count):
+        background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
+        font = pygame.font.SysFont("Consolas", 20)
+        text_line = "" + str(minerals_count)
+        text_surface = font.render(text_line, True, self.white)
+        pygame.draw.rect(self.Surface, self.black, background)
+        pygame.draw.rect(self.Surface, self.white, background, 2)
+        self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
+        self.Surface.blit(text_surface, (int(0.65*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+
+class rare_gas_display:
+    def __init__(self, resolution, surface):
+        self.Resolution = resolution
+        self.Surface = surface
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
+        self.rare_gas = pygame.image.load("Lib\\Gas_barrels.png")
+        self.image = pygame.transform.scale(self.rare_gas, (int(0.95*self.Resolution[1]), int(0.95*resolution[1])))
+
+    def draw_rare_gas_bar(self, rare_gas_count):
+        background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
+        font = pygame.font.SysFont("Consolas", 20)
+        text_line = "" + str(rare_gas_count)
+        text_surface = font.render(text_line, True, self.white)
+        pygame.draw.rect(self.Surface, self.black, background)
+        pygame.draw.rect(self.Surface, self.white, background, 2)
+        self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
+        self.Surface.blit(text_surface, (int(0.65*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
 
 

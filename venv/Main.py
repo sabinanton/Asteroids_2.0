@@ -65,6 +65,14 @@ spacecraft_bar_res = (abs(resolution[0]-minimap_res[0]-health_bar_res[0]-deltaV_
 spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
 spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res,spacecraft_bar_surface)
 
+minerals_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
+minerals_bar_surface = pygame.Surface(minerals_bar_res)
+minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
+
+rare_gas_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
+rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
+rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
+
 while running :
     minimap = pygame.Surface(minimap_res)
     map.update(map.SpaceShip)
@@ -90,6 +98,11 @@ while running :
     screen.blit(spacecraft_bar_surface,
                 [abs(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]+black_hole_bar_res[0]),
                  int(resolution[1]-spacecraft_bar_res[1])])
+    minerals_bar.draw_minerals_bar(map.SpaceShip.Minerals)
+    screen.blit(minerals_bar_surface, (resolution[0]-minerals_bar_res[0],0))
+    map.sim.draw_circle_gain_minerals(math.pi / 6, 20, (255, 255, 255), 12, 50, screen, resolution)
+    rare_gas_bar.draw_rare_gas_bar(map.SpaceShip.Rare_Gases)
+    screen.blit(rare_gas_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0],0))
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -126,6 +139,12 @@ while running :
                         black_hole_bar_res[0]), int(0.5*resolution[1]))
             spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
             spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
+            minerals_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            minerals_bar_surface = pygame.Surface(minerals_bar_res)
+            minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
+            rare_gas_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
+            rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
         if event.type == pygame.MOUSEBUTTONDOWN:
             scale_change = 0.9
             if event.button == 4:

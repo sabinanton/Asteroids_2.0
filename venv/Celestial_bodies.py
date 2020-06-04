@@ -67,6 +67,8 @@ class Asteroid:
         self.black = (0, 0, 0)
         self.green = (30, 255, 30)
         self.yellow = (255, 255, 0)
+        self.content = random.randint(50,200)
+        self.capacity = self.content
 
     def accelerate(self, ax, ay, ang,  step):
         self.velocity_x += ax * step
@@ -93,8 +95,8 @@ class Asteroid:
         if color == None:
             if self.Type == "normal": color = self.white
             if self.Type == "normal_map": color = self.map_white
-            if self.Type == "comet": color = self.blue
-            if self.Type == "metals": color = self.green
+            if self.Type == "minerals": color = self.blue
+            if self.Type == "rare_gases": color = self.green
         white = (255, 255, 255)
         for i in range(len(self.Points)):
             t = self.tetha
@@ -149,6 +151,9 @@ class SpaceShip:
         self.hangar_angle = 60 * math.pi / 180
         self.hangar_open = False
         self.Minerals = 0
+        self.Rare_Gases = 0
+        self.Minerals_Capacity = 1000
+        self.Rare_Gases_Capacity = 1000
         self.Laser_power = 100
         self.velocity = math.sqrt(self.velocity_x**2+self.velocity_y**2)
         self.acceleration = math.sqrt(self.acceleration_x**2 + self.acceleration_y**2)

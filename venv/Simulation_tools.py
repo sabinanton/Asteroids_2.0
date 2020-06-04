@@ -3,6 +3,7 @@ import Celestial_bodies
 import Constants
 import random
 import collections
+import pygame
 
 
 def distance(x1, y1, x2, y2):
@@ -287,6 +288,7 @@ class Simulation:
         self.health_check()
         self.deltaV()
         self.simulate_blackhole()
+        self.simulate_mining()
 
     def simulate_blackhole(self):
         if self.blackhole:
@@ -393,3 +395,35 @@ class Simulation:
             self.Spaceship.deltaV -= 0.005 * dV
             self.Spaceship.deltaV = max(0, self.Spaceship.deltaV)
             print(self.Spaceship.deltaV)
+
+    def simulate_mining(self):
+        self.Spaceship.collision = False
+        for i in self.asteroidList:
+            if self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x,
+                        i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
+                if i.Type == "rare_gases" and i.content>0:
+                    self.Spaceship.Rare_Gases += 2
+                    i.content -= 2
+                    self.Spaceship.Rare_Gases = min(self.Spaceship.Rare_Gases, self.Spaceship.Rare_Gases_Capacity)
+                    print("Mining Rare Gas", self.Spaceship.Rare_Gases)
+
+                elif i.content <= 0:
+                    i.Type = "normal"
+
+                if i.Type == "minerals" and i.content>0:
+                    self.Spaceship.Minerals += 2
+                    i.content -= 2
+                    self.Spaceship.Minerals = min(self.Spaceship.Minerals, self.Spaceship.Minerals_Capacity)
+                    print("Mining Minerals", self.Spaceship.Minerals)
+
+                elif i.content <= 0:
+                    i.Type = "normal"
+
+    def draw_circle_gain_minerals(self, angle, radius, color, font_size, dist, screen, resolution):
+        for i in self.asteroidList:
+            if i.Type != "normal" and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x, i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
+                x = resolution[0]/2 + dist*math.cos(-angle)
+                y = resolution[1]/2 + dist*math.sin(-angle)
+                angle_fill = (1-(i.content / i.capacity))*2*math.pi
+                pygame.draw.arc(screen, color, pygame.Rect(x, y, radius, radius), 0, angle_fill, 5)
+

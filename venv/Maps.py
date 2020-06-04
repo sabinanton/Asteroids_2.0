@@ -46,7 +46,7 @@ class Game_Map:
             vy = v * math.sin(angle) * random.uniform(0.95, 1.05)
             omega = random.uniform(-0.000005, 0.000005)
             mass = random.randint(50000, 100000000)
-            types = ["normal", "normal", "normal", "comet", "comet", "metals", "normal", "normal", "normal", "normal",
+            types = ["normal", "normal", "normal", "minerals", "minerals", "rare_gases", "normal", "normal", "normal", "normal",
                      "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
             Type = random.choice(types)
             # print(x,y)
