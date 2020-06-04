@@ -6,9 +6,7 @@ import Celestial_bodies
 import Constants
 import Simulation_tools, Maps
 import Display_Functions
-
-
-
+import Screens
 
 def controls(event, Map):
     keys = pygame.key.get_pressed()
@@ -73,39 +71,44 @@ rare_gas_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
 rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
 
-button = Display_Functions.Button(screen, "Button1", (0,0,0), 0, 0, 120, 40)
+start_screen = Screens.Start_Screen(screen,resolution)
 
 while running :
-    minimap = pygame.Surface(minimap_res)
-    map.update(map.SpaceShip)
-    spacecraft_bar.update_sc_info(map.SpaceShip.Name,math.sqrt(map.SpaceShip.velocity_x**2 + map.SpaceShip.velocity_y**2),math.sqrt(map.SpaceShip.acceleration_x**2 + map.SpaceShip.acceleration_y**2),Simulation_tools.distance(map.Earth.pos_x,map.Earth.pos_y,map.SpaceShip.pos_x,map.SpaceShip.pos_y),Simulation_tools.distance(map.Sun.pos_x, map.Sun.pos_y, map.SpaceShip.pos_x,map.SpaceShip.pos_y))
-    map.draw(resolution, screen)
-    button.draw()
-    map.update_fixed_scale(map.Sun, mini_map_scale)
-    map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
-    screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
-    Health_bar.draw_health_bar(map.SpaceShip.health)
-    screen.blit(health_bar_surface, [minimap_res[0],resolution[1]-health_bar_res[1]])
-    deltaV_bar.draw_deltaV_bar(map.SpaceShip.deltaV)
-    screen.blit(deltaV_bar_surface, [int(minimap_res[0]+health_bar_res[0]), int(resolution[1] - deltaV_bar_res[1])])
-    missiles_bar.draw_missiles_bar(map.SpaceShip.Number_of_missiles)
-    screen.blit(missiles_bar_surface, [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+laser_bar_res[0]), int(resolution[1] - missiles_bar_res[1])])
-    laser_bar.draw_laser_bar(map.SpaceShip.Laser_power)
-    screen.blit(laser_bar_surface,
-                [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]), int(resolution[1] - laser_bar_res[1])])
-    black_hole_bar.draw_black_hole_bar(map.SpaceShip.blackhole)
-    screen.blit(black_hole_bar_surface,
-                [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]),
-                 int(resolution[1]-black_hole_bar_res[1])])
-    spacecraft_bar.draw_sc_info()
-    screen.blit(spacecraft_bar_surface,
-                [abs(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]+black_hole_bar_res[0]),
-                 int(resolution[1]-spacecraft_bar_res[1])])
-    minerals_bar.draw_minerals_bar(map.SpaceShip.Minerals)
-    screen.blit(minerals_bar_surface, (resolution[0]-minerals_bar_res[0],0))
-    map.sim.draw_circle_gain_minerals(math.pi / 6, 20, (255, 255, 255), 12, 50, screen, resolution)
-    rare_gas_bar.draw_rare_gas_bar(map.SpaceShip.Rare_Gases)
-    screen.blit(rare_gas_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0],0))
+    if start_screen.start_is_active:
+        start_screen.draw_start_screen()
+        if start_screen.play.isPressed and start_screen.play.isHovered:
+            start_screen.start_is_active = False
+            map.SpaceShip.Name = start_screen.Name_SC.input
+    else:
+        minimap = pygame.Surface(minimap_res)
+        map.update(map.SpaceShip)
+        spacecraft_bar.update_sc_info(map.SpaceShip.Name,math.sqrt(map.SpaceShip.velocity_x**2 + map.SpaceShip.velocity_y**2),math.sqrt(map.SpaceShip.acceleration_x**2 + map.SpaceShip.acceleration_y**2),Simulation_tools.distance(map.Earth.pos_x,map.Earth.pos_y,map.SpaceShip.pos_x,map.SpaceShip.pos_y),Simulation_tools.distance(map.Sun.pos_x, map.Sun.pos_y, map.SpaceShip.pos_x,map.SpaceShip.pos_y))
+        map.draw(resolution, screen)
+        map.update_fixed_scale(map.Sun, mini_map_scale)
+        map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
+        screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
+        Health_bar.draw_health_bar(map.SpaceShip.health)
+        screen.blit(health_bar_surface, [minimap_res[0],resolution[1]-health_bar_res[1]])
+        deltaV_bar.draw_deltaV_bar(map.SpaceShip.deltaV)
+        screen.blit(deltaV_bar_surface, [int(minimap_res[0]+health_bar_res[0]), int(resolution[1] - deltaV_bar_res[1])])
+        missiles_bar.draw_missiles_bar(map.SpaceShip.Number_of_missiles)
+        screen.blit(missiles_bar_surface, [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+laser_bar_res[0]), int(resolution[1] - missiles_bar_res[1])])
+        laser_bar.draw_laser_bar(map.SpaceShip.Laser_power)
+        screen.blit(laser_bar_surface,
+                    [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]), int(resolution[1] - laser_bar_res[1])])
+        black_hole_bar.draw_black_hole_bar(map.SpaceShip.blackhole)
+        screen.blit(black_hole_bar_surface,
+                    [int(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]),
+                     int(resolution[1]-black_hole_bar_res[1])])
+        spacecraft_bar.draw_sc_info()
+        screen.blit(spacecraft_bar_surface,
+                    [abs(minimap_res[0] + health_bar_res[0] + deltaV_bar_res[0]+missiles_bar_res[0]+laser_bar_res[0]+black_hole_bar_res[0]),
+                     int(resolution[1]-spacecraft_bar_res[1])])
+        minerals_bar.draw_minerals_bar(map.SpaceShip.Minerals)
+        screen.blit(minerals_bar_surface, (resolution[0]-minerals_bar_res[0],0))
+        map.sim.draw_circle_gain_minerals(math.pi / 6, 20, (255, 255, 255), 12, 50, screen, resolution)
+        rare_gas_bar.draw_rare_gas_bar(map.SpaceShip.Rare_Gases)
+        screen.blit(rare_gas_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0],0))
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -118,52 +121,59 @@ while running :
                 pygame.QUIT
                 sys.exit()
         if event.type == pygame.VIDEORESIZE:
-            resolution = (event.w, event.h)
-            minimap_res = (int(300 / 720 * resolution[1]), int(300 / 720 * resolution[1]))
-            screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
-            screct = screen.get_rect()
-            deltaV_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
-            deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res, deltaV_bar_surface)
-            health_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            health_bar_surface = pygame.Surface(health_bar_res)
-            Health_bar = Display_Functions.health_display(health_bar_res, health_bar_surface)
-            missiles_bar_res = (int((1/4) * minimap_res[0]), int(0.05 * resolution[1]))
-            missiles_bar_surface = pygame.Surface(missiles_bar_res)
-            missiles_bar = Display_Functions.missiles_display(missiles_bar_res, missiles_bar_surface)
-            laser_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            laser_bar_surface = pygame.Surface(laser_bar_res)
-            laser_bar = Display_Functions.laser_display(laser_bar_res, laser_bar_surface)
-            black_hole_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            black_hole_bar_surface = pygame.Surface(black_hole_bar_res)
-            black_hole_bar = Display_Functions.black_hole_display(black_hole_bar_res, black_hole_bar_surface)
-            spacecraft_bar_res = (
-                        abs(resolution[0] - minimap_res[0] - health_bar_res[0] - deltaV_bar_res[0] - missiles_bar_res[0] - laser_bar_res[0] -
-                        black_hole_bar_res[0]), int(0.5*resolution[1]))
-            spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
-            spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
-            minerals_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            minerals_bar_surface = pygame.Surface(minerals_bar_res)
-            minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
-            rare_gas_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
-            rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
-            rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            scale_change = 0.9
-            if event.button == 4:
-               map.scale /= scale_change
-            if event.button == 5:
-                map.scale *= scale_change
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_h:
-                map.SpaceShip.hangar_open = not map.SpaceShip.hangar_open
-            if event.key == pygame.K_e:
-                map.SpaceShip.fire_missile(40000)
-            if event.key == pygame.K_b:
-                if map.SpaceShip.blackhole > 0:
-                    map.sim.blackhole = Celestial_bodies.BlackHole(map.SpaceShip.pos_x, map.SpaceShip.pos_y, 0,
-                                                                   15 * 10 ** 8)
-                    map.SpaceShip.blackhole -= 1
-    controls(event, map)
+                resolution = (event.w, event.h)
+                screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
+                start_screen.update(resolution, screen)
+                resolution = (event.w, event.h)
+                minimap_res = (int(300 / 720 * resolution[1]), int(300 / 720 * resolution[1]))
+                screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
+                screct = screen.get_rect()
+                deltaV_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
+                deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res, deltaV_bar_surface)
+                health_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                health_bar_surface = pygame.Surface(health_bar_res)
+                Health_bar = Display_Functions.health_display(health_bar_res, health_bar_surface)
+                missiles_bar_res = (int((1/4) * minimap_res[0]), int(0.05 * resolution[1]))
+                missiles_bar_surface = pygame.Surface(missiles_bar_res)
+                missiles_bar = Display_Functions.missiles_display(missiles_bar_res, missiles_bar_surface)
+                laser_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                laser_bar_surface = pygame.Surface(laser_bar_res)
+                laser_bar = Display_Functions.laser_display(laser_bar_res, laser_bar_surface)
+                black_hole_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                black_hole_bar_surface = pygame.Surface(black_hole_bar_res)
+                black_hole_bar = Display_Functions.black_hole_display(black_hole_bar_res, black_hole_bar_surface)
+                spacecraft_bar_res = (
+                            abs(resolution[0] - minimap_res[0] - health_bar_res[0] - deltaV_bar_res[0] - missiles_bar_res[0] - laser_bar_res[0] -
+                            black_hole_bar_res[0]), int(0.5*resolution[1]))
+                spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
+                spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
+                minerals_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                minerals_bar_surface = pygame.Surface(minerals_bar_res)
+                minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
+                rare_gas_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
+                rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
+        if start_screen.start_is_active:
+            start_screen.Name_SC.text_box_controls(event)
+        if start_screen.start_is_active == False:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                scale_change = 0.9
+                if event.button == 4:
+                   map.scale /= scale_change
+                if event.button == 5:
+                    map.scale *= scale_change
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_h:
+                    map.SpaceShip.hangar_open = not map.SpaceShip.hangar_open
+                if event.key == pygame.K_e:
+                    map.SpaceShip.fire_missile(40000)
+                if event.key == pygame.K_b:
+                    if map.SpaceShip.blackhole > 0:
+                        map.sim.blackhole = Celestial_bodies.BlackHole(map.SpaceShip.pos_x, map.SpaceShip.pos_y, 0,
+                                                                       15 * 10 ** 8)
+                        map.SpaceShip.blackhole -= 1
+    if start_screen.start_is_active == False:
+        controls(event, map)
 
 

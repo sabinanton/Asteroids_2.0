@@ -213,7 +213,7 @@ class Button:
         if i1 == 1: self.isPressed = True
         if self.X <= x <= self.X + self.Width and self.Y <= y <= self.Y + self.Height:
             self.isHovered = True
-        if self.isPressed:
+        if self.isPressed and self.isHovered:
             aux = color_o
             color_o = color_i
             color_i = aux
@@ -226,3 +226,71 @@ class Button:
         font = pygame.font.SysFont("Consolas", 20)
         text_surface = font.render(self.Text, True, color_o)
         self.Surface.blit(text_surface, (self.X + (self.Width - font.size(self.Text)[0])/2, self.Y + (self.Height - font.size(self.Text)[1])/2))
+
+    def update(self, x, y, width, height):
+        self.X = x
+        self.Y = y
+        self.Width = width
+        self.Height = height
+
+class Text_box_Display:
+    def __init__(self, surface, label, color, x, y, width, height):
+        self.Surface = surface
+        self.Label = label
+        self.Color = color
+        self.Color_2 = (255 - self.Color[0], 255-self.Color[1], 255 - self.Color[2])
+        self.X = x
+        self.Y = y
+        self.Width = width
+        self.Height = height
+        self.isHovered = False
+        self.isPressed = False
+        self.input = ""
+        self.is_active = False
+
+    def draw_text_box(self):
+        pygame.draw.rect(self.Surface, self.Color, (self.X,self.Y,self.Width,self.Height))
+        pygame.draw.rect(self.Surface, self.Color_2, (self.X,self.Y,self.Width,self.Height), 2)
+        font = pygame.font.SysFont("Consolas", 20)
+        text_surface = font.render(self.Label, False, self.Color_2)
+        self.Surface.blit(text_surface, (10 + self.X,self.Y+(self.Height-font.size(self.Label)[1])/2))
+        x_input = font.size(self.Label)[0] + 5 + self.X
+        y_input = self.Y + 5
+        width_input = self.Width - (font.size(self.Label)[0] + 10)
+        height_input = self.Height - 10
+        pygame.draw.rect(self.Surface, self.Color, (x_input,y_input,width_input,height_input))
+        input_surface = font.render(self.input, False, self.Color_2)
+        self.Surface.blit(input_surface, (15+self.X+font.size(self.Label)[0],self.Y+(self.Height-font.size(self.input)[1])/2))
+        if self.is_active == True:
+            pygame.draw.rect(self.Surface, self.Color_2, (self.X+15+font.size(self.Label)[0]+font.size(self.input)[0], self.Y + 10, 2, self.Height - 20))
+
+    def text_box_controls(self, event):
+        x, y = pygame.mouse.get_pos()
+        i1, i2, i3 = pygame.mouse.get_pressed()
+        self.isPressed = False
+        self.isHovered = False
+        if i1 == 1: self.isPressed = True
+        if self.X <= x <= self.X + self.Width and self.Y <= y <= self.Y + self.Height:
+            self.isHovered = True
+        if self.isPressed == True and self.isHovered == True:
+            self.is_active = True
+        elif self.isPressed == True:
+            self.is_active = False
+
+        if self.is_active:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.input = self.input[:-1]
+                else:
+                    self.input += event.unicode
+
+    def update(self, x, y, width, height):
+        self.X = x
+        self.Y = y
+        self.Width = width
+        self.Height = height
+
+
+
+
+
