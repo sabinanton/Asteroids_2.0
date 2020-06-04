@@ -168,7 +168,7 @@ class minerals_display:
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
-        self.Surface.blit(text_surface, (int(0.65*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(text_surface, (int(0.55*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
 
 class rare_gas_display:
     def __init__(self, resolution, surface):
@@ -187,6 +187,42 @@ class rare_gas_display:
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
-        self.Surface.blit(text_surface, (int(0.65*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(text_surface, (int(0.55*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
 
 
+class Button:
+
+    def __init__(self, surface, text, color, x, y, width, height):
+        self.Surface = surface
+        self.Text = text
+        self.Color = color
+        self.X = x
+        self.Y = y
+        self.Width = width
+        self.Height = height
+        self.isHovered = False
+        self.isPressed = False
+
+    def draw(self):
+        color_o = (255 - self.Color[0], 255 - self.Color[1], 255 - self.Color[2])
+        color_i = self.Color
+        x, y = pygame.mouse.get_pos()
+        i1, i2, i3 = pygame.mouse.get_pressed()
+        self.isPressed = False
+        self.isHovered = False
+        if i1 == 1: self.isPressed = True
+        if self.X <= x <= self.X + self.Width and self.Y <= y <= self.Y + self.Height:
+            self.isHovered = True
+        if self.isPressed:
+            aux = color_o
+            color_o = color_i
+            color_i = aux
+        elif self.isHovered:
+            color_i = (50 + color_i[0], 50 + color_i[1], 50 + color_i[2])
+
+        rect = pygame.Rect(self.X, self.Y, self.Width, self.Height)
+        pygame.draw.rect(self.Surface, color_i, rect)
+        pygame.draw.rect(self.Surface, color_o, rect, 2)
+        font = pygame.font.SysFont("Consolas", 20)
+        text_surface = font.render(self.Text, True, color_o)
+        self.Surface.blit(text_surface, (self.X + (self.Width - font.size(self.Text)[0])/2, self.Y + (self.Height - font.size(self.Text)[1])/2))

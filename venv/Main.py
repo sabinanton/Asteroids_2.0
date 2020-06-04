@@ -73,11 +73,14 @@ rare_gas_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
 rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
 
+button = Display_Functions.Button(screen, "Button1", (0,0,0), 0, 0, 120, 40)
+
 while running :
     minimap = pygame.Surface(minimap_res)
     map.update(map.SpaceShip)
     spacecraft_bar.update_sc_info(map.SpaceShip.Name,math.sqrt(map.SpaceShip.velocity_x**2 + map.SpaceShip.velocity_y**2),math.sqrt(map.SpaceShip.acceleration_x**2 + map.SpaceShip.acceleration_y**2),Simulation_tools.distance(map.Earth.pos_x,map.Earth.pos_y,map.SpaceShip.pos_x,map.SpaceShip.pos_y),Simulation_tools.distance(map.Sun.pos_x, map.Sun.pos_y, map.SpaceShip.pos_x,map.SpaceShip.pos_y))
     map.draw(resolution, screen)
+    button.draw()
     map.update_fixed_scale(map.Sun, mini_map_scale)
     map.draw_fixed_scale(minimap_res, resolution,  minimap, mini_map_scale, map.SpaceShip)
     screen.blit(minimap, [0, resolution[1]-minimap_res[1]])
