@@ -422,8 +422,16 @@ class Simulation:
     def draw_circle_gain_minerals(self, angle, radius, color, font_size, dist, screen, resolution):
         for i in self.asteroidList:
             if i.Type != "normal" and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x, i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
+                font = pygame.font.SysFont("Consolas", 11)
                 x = resolution[0]/2 + dist*math.cos(-angle)
                 y = resolution[1]/2 + dist*math.sin(-angle)
                 angle_fill = (1-(i.content / i.capacity))*2*math.pi
-                pygame.draw.arc(screen, color, pygame.Rect(x, y, radius, radius), 0, angle_fill, 5)
+                percentage = round((1-(i.content/i.capacity))*100)
+                text_percentage = str(percentage)+" %"
+                text_mining = "Mining..."
+                percentage_surface = font.render(text_percentage, True, (255,255,255))
+                mining_surface = font.render(text_mining, True, (255,255,255))
+                screen.blit(mining_surface, (int((x-font.size(text_percentage)[0]/2)+2.5*radius), int(y-font.size(text_percentage)[1]/2)))
+                screen.blit(percentage_surface, (int(x-font.size(text_percentage)[0]/2), int(y-font.size(text_percentage)[1]/2)))
+                pygame.draw.arc(screen, color, pygame.Rect(x-radius, y-radius, 2*radius, 2*radius), 0, angle_fill, 4)
 
