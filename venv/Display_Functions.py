@@ -127,13 +127,13 @@ class sc_info_display:
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         font = pygame.font.SysFont("Consolas", 12)
-        name_text_line = "Name of Spacecraft: " + str(self.name)
+        name_text_line = "Spacecraft Name: " + str(self.name)
         name_text_surface = font.render(name_text_line, True, self.white)
         self.Surface.blit(name_text_surface, (((self.Resolution[0]-font.size(name_text_line)[0])/2), (self.Resolution[1]/n)))
-        velocity_text_line = "Current velocity: " + str(self.velocity) + " [km/s]"
+        velocity_text_line = "Velocity: " + str(self.velocity) + " [km/s]"
         velocity_text_surface = font.render(velocity_text_line, True, self.white)
         self.Surface.blit(velocity_text_surface, (((self.Resolution[0]-font.size(velocity_text_line)[0])/2), (self.Resolution[1]*2/n)))
-        acceleration_text_line = "Current Acceleration: " + str(self.acceleration) + " [km/s^2]"
+        acceleration_text_line = "Acceleration: " + str(self.acceleration) + " [km/s^2]"
         acceleration_text_surface = font.render(acceleration_text_line, True, self.white)
         self.Surface.blit(acceleration_text_surface, (((self.Resolution[0]-font.size(acceleration_text_line)[0])/2), (self.Resolution[1]*3/n)))
         distance_from_Earth_text_line = "Distance from Earth: " + str(self.distance_from_Earth) + " [AU]"

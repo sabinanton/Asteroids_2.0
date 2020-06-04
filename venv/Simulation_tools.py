@@ -27,7 +27,7 @@ class Simulation:
         self.blackhole = None
 
     def updatePlanet(self, body, ax, ay, Step):
-        if body != self.blackhole:
+        if body != self.blackhole and body != self.planetList[0]:
             vx = body.velocity_x + ax*Step
             vy = body.velocity_y + ay*Step
             x = body.pos_x + vx*Step
@@ -162,7 +162,6 @@ class Simulation:
             Torque = arm * Force
             aa = Torque / (0.5 * self.asteroidList[ast].Mass * self.asteroidList[ast].Radius**2)
             if Alpha < 0: Torque = - Torque
-            print(ax, ay)
             self.asteroidList[ast].accelerate(ax, ay, aa, self.step)
             N_particles = int((30 + random.randint(-10, 30))/ ((Distance/11**10)**2+1))
             T = (self.Spaceship.tetha + math.pi / 2)
@@ -173,7 +172,6 @@ class Simulation:
             spread = math.pi/6
             self.Spaceship.Laser_power -= 0.0001*self.step
             self.Spaceship.Laser_power = max(0,self.Spaceship.Laser_power)
-            print(self.Spaceship.Laser_power)
             for i in range(N_particles):
                 tetha = random.uniform(T - spread , T + spread) + math.pi
                 v = math.sqrt(vx ** 2 + vy ** 2) * random.uniform(0.1, 0.5)
@@ -184,7 +182,6 @@ class Simulation:
         elif self.Spaceship.Laser_fired == False and self.Spaceship.Laser_power<100:
             self.Spaceship.Laser_power += 0.00005*self.step
 
-        print(self.Spaceship.Laser_fired, self.Spaceship.Laser_power)
 
     def simulate(self):
         pList = self.planetList
@@ -372,7 +369,7 @@ class Simulation:
                     area_planet = math.pi * i.Radius ** 2
                     self.Spaceship.health -= 10 ** (-25) * (velocity_collision_planet * area_planet)
                     self.Spaceship.health = max(0, self.Spaceship.health)
-                    print(self.Spaceship.health)
+            print(self.Spaceship.health)
 
             for j in self.asteroidList:
                 if self.Spaceship.collision and self.Spaceship.health >= 0:
