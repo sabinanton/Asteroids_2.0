@@ -12,8 +12,8 @@ class health_display:
         self.image = pygame.transform.scale(self.heart, ((int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1]))))
 
     def draw_health_bar(self, health):
-        background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
-        try:
+            background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
+            health = min(100, max(health, 0))
             health_bar = pygame.Rect(
             [int(0.15 * self.Resolution[0] + 6), 6, int(0.85 * self.Resolution[0] - 12), self.Resolution[1] - 12])
             life_bar = pygame.Rect(
@@ -24,7 +24,7 @@ class health_display:
             pygame.draw.rect(self.Surface, self.white, health_bar, 2)
             pygame.draw.rect(self.Surface, self.white, life_bar)
             self.Surface.blit(self.image, (int(0.02*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
-        except: "TypeError: Argument must be rect style object"
+
 
 
 class deltaV_display:
@@ -247,6 +247,8 @@ class Text_box_Display:
         self.isPressed = False
         self.input = ""
         self.is_active = False
+        self.Period = 100
+        self.Cursor_on = True
 
     def draw_text_box(self):
         pygame.draw.rect(self.Surface, self.Color, (self.X,self.Y,self.Width,self.Height))
@@ -262,7 +264,11 @@ class Text_box_Display:
         input_surface = font.render(self.input, False, self.Color_2)
         self.Surface.blit(input_surface, (15+self.X+font.size(self.Label)[0],self.Y+(self.Height-font.size(self.input)[1])/2))
         if self.is_active == True:
-            pygame.draw.rect(self.Surface, self.Color_2, (self.X+15+font.size(self.Label)[0]+font.size(self.input)[0], self.Y + 10, 2, self.Height - 20))
+            self.Period -= 1
+            if self.Period == 0:
+                self.Cursor_on = not self.Cursor_on
+                self.Period = 100
+            if self.Cursor_on: pygame.draw.rect(self.Surface, self.Color_2, (self.X+15+font.size(self.Label)[0]+font.size(self.input)[0], self.Y + 10, 2, self.Height - 20))
 
     def text_box_controls(self, event):
         x, y = pygame.mouse.get_pos()
@@ -282,7 +288,9 @@ class Text_box_Display:
                 if event.key == pygame.K_BACKSPACE:
                     self.input = self.input[:-1]
                 else:
-                    self.input += event.unicode
+                    font = pygame.font.SysFont("Consolas", 20)
+                    if font.size(self.input)[0] < self.Width - (font.size(self.Label)[0] + 20):
+                        self.input += event.unicode
 
     def update(self, x, y, width, height):
         self.X = x

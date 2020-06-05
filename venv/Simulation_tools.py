@@ -215,8 +215,7 @@ class Simulation:
             for j in range(len(pList)):
 
                 d = distance(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
-                if d < i.Radius + pList[j].Radius: Force = -Constants.G*i.Mass*pList[j].Mass/d**2
-                else: Force = Constants.G*i.Mass*pList[j].Mass/d**2
+                Force = Constants.G*i.Mass*pList[j].Mass/d**2
                 gamma = angle(i.pos_x, i.pos_y, pList[j].pos_x, pList[j].pos_y)
                 alpha = math.atan2(i.velocity_y, i.velocity_x)
                 velocity = math.sqrt(i.velocity_x**2 + i.velocity_y**2)
@@ -295,7 +294,7 @@ class Simulation:
             if self.blackhole.bake_time > 0:
                 self.blackhole.bake_time -= 1
             else:
-                self.blackhole.Mass = 10**29
+                self.blackhole.Mass = 3 * 10**30
                 if self.blackhole not in self.planetList:
                     self.planetList.append(self.blackhole)
 
@@ -359,7 +358,6 @@ class Simulation:
                     v_y = vy + v * math.sin(tetha)
                     debree1 = Celestial_bodies.Particle(30 + random.randint(-20, 20), x, y, v_x, v_y, j.Type)
                     self.particleList.append(debree1)
-                print(self.Spaceship.velocity_x)
 
     def health_check(self):
         if self.Spaceship.health >= 0:
@@ -371,7 +369,6 @@ class Simulation:
                     area_planet = math.pi * i.Radius ** 2
                     self.Spaceship.health -= 10 ** (-25) * (velocity_collision_planet * area_planet)
                     self.Spaceship.health = max(0, self.Spaceship.health)
-            print(self.Spaceship.health)
 
             for j in self.asteroidList:
                 if self.Spaceship.collision and self.Spaceship.health >= 0:
@@ -380,7 +377,6 @@ class Simulation:
                                     self.Spaceship.velocity_y - j.velocity_y) ** 2)
                     area_asteroid = math.pi * j.Radius ** 2
                     self.Spaceship.health -= 0.4 * 10 ** (-24) * (velocity_collision_asteroid * area_asteroid) / 2
-                    print(self.Spaceship.health)
 
     def deltaV(self):
         acc_sc = math.sqrt(self.Spaceship.acceleration_x ** 2 + self.Spaceship.acceleration_y ** 2)
@@ -399,7 +395,7 @@ class Simulation:
     def simulate_mining(self):
         self.Spaceship.collision = False
         for i in self.asteroidList:
-            if self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x,
+            if self.Spaceship.hangar_open and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x,
                         i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
                 if i.Type == "rare_gases" and i.content>0:
                     self.Spaceship.Rare_Gases += 2
@@ -421,7 +417,7 @@ class Simulation:
 
     def draw_circle_gain_minerals(self, angle, radius, color, font_size, dist, screen, resolution):
         for i in self.asteroidList:
-            if i.Type != "normal" and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x, i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
+            if self.Spaceship.hangar_open and i.Type != "normal" and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x, i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
                 font = pygame.font.SysFont("Consolas", 11)
                 x = resolution[0]/2 + dist*math.cos(-angle)
                 y = resolution[1]/2 + dist*math.sin(-angle)

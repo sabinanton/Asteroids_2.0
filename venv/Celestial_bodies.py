@@ -139,7 +139,7 @@ class SpaceShip:
         self.Engine_fired = False
         self.Left_stube_fired = 0
         self.Right_stube_fired = 0
-        self.Number_of_missiles = 60
+        self.Number_of_missiles = 30
         self.blackhole = 1
         self.missiles = []
         self.laser_length = 0
@@ -183,8 +183,8 @@ class SpaceShip:
     def fire_missile(self, speed):
         if self.Number_of_missiles:
             t = self.tetha + math.pi/2
-            x = self.pos_x + self.scale*10*math.cos(t)
-            y = self.pos_y + 10*self.scale*math.sin(t)
+            x = self.pos_x + self.scale*3*math.cos(t)
+            y = self.pos_y + 3*self.scale*math.sin(t)
             vx = self.velocity_x + speed*math.cos(t)
             vy = self.velocity_y + speed*math.sin(t)
             missile = Missile(x, y, vx, vy, self.tetha + math.pi, self.scale*1)
@@ -405,8 +405,8 @@ class Particle:
         if color == None:
             if self.Type == "normal": color = self.white
             if self.Type == "normal_map": color = self.map_white
-            if self.Type == "comet": color = self.blue
-            if self.Type == "metals": color = self.green
+            if self.Type == "minerals": color = self.blue
+            if self.Type == "rare_gases": color = self.green
         p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         try: 
             if self.life >0 : pygame.draw.circle(screen, color, [p[0], p[1]], 1, 1)

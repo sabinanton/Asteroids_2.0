@@ -8,6 +8,7 @@ import Simulation_tools, Maps
 import Display_Functions
 import Screens
 
+
 def controls(event, Map):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
@@ -72,13 +73,23 @@ rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
 
 start_screen = Screens.Start_Screen(screen,resolution)
+cursor = pygame.image.load("Lib\\Cursor.png")
+cursor = pygame.transform.scale(cursor, (25, 25))
+pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+soundtrack = pygame.mixer.Sound("Lib\\Soundtrack.wav")
 
 while running :
+
     if start_screen.start_is_active:
         start_screen.draw_start_screen()
-        if start_screen.play.isPressed and start_screen.play.isHovered:
+        if start_screen.play.isPressed and start_screen.play.isHovered and start_screen.HowToPlayActive == False:
             start_screen.start_is_active = False
             map.SpaceShip.Name = start_screen.Name_SC.input
+            soundtrack.play(-1)
+        if start_screen.how_to_play.isPressed and start_screen.how_to_play.isHovered:
+            start_screen.HowToPlayActive = True
+        elif start_screen.HowToPlayActive and start_screen.HTPclose.isHovered and start_screen.HTPclose.isPressed:
+            start_screen.HowToPlayActive = False
     else:
         minimap = pygame.Surface(minimap_res)
         map.update(map.SpaceShip)
@@ -109,6 +120,8 @@ while running :
         map.sim.draw_circle_gain_minerals(math.pi / 6, 20, (255, 255, 255), 12, 50, screen, resolution)
         rare_gas_bar.draw_rare_gas_bar(map.SpaceShip.Rare_Gases)
         screen.blit(rare_gas_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0],0))
+    (x, y) = pygame.mouse.get_pos()
+    screen.blit(cursor, (x, y))
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -173,6 +186,7 @@ while running :
                         map.sim.blackhole = Celestial_bodies.BlackHole(map.SpaceShip.pos_x, map.SpaceShip.pos_y, 0,
                                                                        15 * 10 ** 8)
                         map.SpaceShip.blackhole -= 1
+
     if start_screen.start_is_active == False:
         controls(event, map)
 
