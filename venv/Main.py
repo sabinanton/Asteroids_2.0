@@ -154,7 +154,7 @@ while running :
         if time.time()-now>=30:
             if spacecraft_bar.distance_from_Earth < 0.1:
                 end_screen.end_is_active = True
-        print(spacecraft_bar.distance_from_Earth)
+        print(spacecraft_bar.distance_from_Earth, end_screen.calculate_score(map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases, map.SpaceShip.Number_of_missiles, map.SpaceShip.health, dist))
 
     (x, y) = pygame.mouse.get_pos()
     screen.blit(cursor, (x, y))

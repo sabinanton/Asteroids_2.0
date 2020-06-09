@@ -69,7 +69,7 @@ class end_screen:
         self.cost_minerals = 25000
         self.cost_rare_gas = 15000
         self.cost_missiles = 5
-        self.repair_factor = 5
+        self.repair_factor = 5000
         self.initial_cost = 10000000
 
     def calculate_score(self, minerals, rare_gas, missiles, health, distance):
@@ -78,23 +78,24 @@ class end_screen:
         if distance >= 20*Constants.AU:
             profit = -self.initial_cost
         else:
-            profit = round((self.cost_minerals*minerals)+(self.cost_rare_gas*rare_gas)+(missiles*self.cost_missiles)-(1-(health/100))*self.repair_factor - self.initial_cost)
+            profit = round((self.cost_minerals*minerals)+(self.cost_rare_gas*rare_gas)+(missiles*self.cost_missiles)-(1-health/100)*self.repair_factor - self.initial_cost)
         return profit
 
     def draw_end_screen(self, score):
         pygame.draw.rect(self.Screen, self.black, pygame.Rect(0, 0, self.Resolution[0], self.Resolution[1]))
-        text_font = pygame.font.SysFont("Algerian", 40)
+        text_font = pygame.font.SysFont("Algerian", 80)
         over_text = "GAME OVER"
         over_surface = text_font.render(over_text, False, self.white)
+        text_font2 = pygame.font.SysFont("Consolas", 30)
         self.Screen.blit(over_surface, (int((self.Resolution[0]-text_font.size(over_text)[0])/2), int(0.15*self.Resolution[1])))
         win_text = "MISSION SUCCESSFUL! YOUR PROFIT IS: "+str(int(score))+" $"
-        win_surface = text_font.render(win_text, False, self.white)
+        win_surface = text_font2.render(win_text, False, self.white)
         lose_text = "MISSION FAILED! YOUR PROFIT IS: "+str(int(score))+" $"
-        lose_surface = text_font.render(lose_text, False, self.white)
+        lose_surface = text_font2.render(lose_text, False, self.white)
         if score>0:
-            self.Screen.blit(win_surface, (int((self.Resolution[0]-text_font.size(win_text)[0])/2), int(0.45*self.Resolution[1])))
+            self.Screen.blit(win_surface, (int((self.Resolution[0]-text_font2.size(win_text)[0])/2), int(0.45*self.Resolution[1])))
         if score<=0:
-            self.Screen.blit(lose_surface, (int((self.Resolution[0]-text_font.size(lose_text)[0])/2), int(0.45*self.Resolution[1])))
+            self.Screen.blit(lose_surface, (int((self.Resolution[0]-text_font2.size(lose_text)[0])/2), int(0.45*self.Resolution[1])))
 
     def update(self, new_resolution, new_screen):
         self.Screen = new_screen
