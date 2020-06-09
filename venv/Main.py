@@ -1,12 +1,15 @@
-import pygame, sys
-import random
 import math
-from pygame import gfxdraw
+import random
+
 import Celestial_bodies
 import Constants
-import Simulation_tools, Maps
 import Display_Functions
+import Maps
 import Screens
+import Simulation_tools
+import pygame
+import sys
+
 
 
 def controls(event, Map):
@@ -73,10 +76,10 @@ rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
 
 start_screen = Screens.Start_Screen(screen,resolution)
-cursor = pygame.image.load("Lib\\Cursor.png")
+cursor = pygame.image.load(Display_Functions.resource_path("Cursor.png"))
 cursor = pygame.transform.scale(cursor, (25, 25))
 pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
-soundtrack = pygame.mixer.Sound("Lib\\Soundtrack.wav")
+soundtrack = pygame.mixer.Sound(Display_Functions.resource_path("Soundtrack.wav"))
 
 while running :
 
@@ -126,12 +129,10 @@ while running :
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-                pygame.QUIT
                 sys.exit()
         if event.type == pygame.VIDEORESIZE:
                 resolution = (event.w, event.h)

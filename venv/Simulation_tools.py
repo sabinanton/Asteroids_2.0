@@ -7,10 +7,26 @@ import pygame
 
 
 def distance(x1, y1, x2, y2):
+    """
+    
+    :param x1: x-coordinate of first body
+    :param y1: y-coordinate of first body
+    :param x2: x-coordinate of second body
+    :param y2: y-coordinate of second body
+    :return: the distance between body 1 and body 2
+    """
     return math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2)
 
 
 def angle(x1, y1, x2, y2):
+    """
+    
+    :param x1: x-coordinate of first body
+    :param y1: y-coordinate of first body
+    :param x2: x-coordinate of second body
+    :param y2: y-coordinate of second body
+    :return: the angle between the two bodies and the x axis
+    """
     return math.atan2(y2 - y1, x2 - x1)
 
 
@@ -28,6 +44,14 @@ class Simulation:
         self.blackhole = None
 
     def updatePlanet(self, body, ax, ay, Step):
+        """
+
+        :param body: the planet that will be updated
+        :param ax: the planet's acceleration's x-component
+        :param ay: the planet's acceleration's y-component
+        :param Step: the differential time step
+        :return: it updates the acceleration of the planet and integrates its position and velocity over time
+        """
         if body != self.blackhole and body != self.planetList[0]:
             vx = body.velocity_x + ax*Step
             vy = body.velocity_y + ay*Step
@@ -41,6 +65,14 @@ class Simulation:
             body.pos_y = y
 
     def updateAsteroid(self, body, ax, ay, omega, Step):
+        """
+
+                :param body: the asteroid that will be updated
+                :param ax: the asteroid's acceleration's x-component
+                :param ay: the asteroid's acceleration's y-component
+                :param Step: the differential time step
+                :return: it updates the acceleration of the asteroid and integrates its position and velocity over time
+                """
         vx = body.velocity_x + ax*Step
         vy = body.velocity_y + ay*Step
         x = body.pos_x + vx*Step
@@ -54,6 +86,14 @@ class Simulation:
         body.pos_y = y
 
     def updateSpaceShip(self, body, ax, ay, omega, Step):
+        """
+
+                :param body: the spaceship that will be updated
+                :param ax: the spaceship's acceleration's x-component
+                :param ay: the spaceship's acceleration's y-component
+                :param Step: the differential time step
+                :return: it updates the acceleration of the spaceship and integrates its position and velocity over time
+                """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
         x = body.pos_x + vx * Step
@@ -69,6 +109,14 @@ class Simulation:
         body.pos_y = y
 
     def updateMissile(self, body, ax, ay, omega, Step):
+        """
+
+            :param body: the missile that will be updated
+            :param ax: the missile's acceleration's x-component
+            :param ay: the missile's acceleration's y-component
+            :param Step: the differential time step
+            :return: it updates the acceleration of the missile and integrates its position and velocity over time
+        """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
         x = body.pos_x + vx * Step
@@ -82,6 +130,14 @@ class Simulation:
         body.pos_y = y
 
     def updateParticle(self, body, ax, ay, Step):
+        """
+
+        :param body: the particle that will be updated
+        :param ax: the particle's acceleration's x-component
+        :param ay: the particle's acceleration's y-component
+        :param Step: the differential time step
+        :return: it updates the acceleration of the particle and integrates its position and velocity over time
+        """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
         x = body.pos_x + vx * Step

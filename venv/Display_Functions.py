@@ -1,6 +1,15 @@
 import pygame
 import Constants
 import math
+import os
+import sys
+
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 
 class health_display:
     def __init__(self, resolution, surface):
@@ -8,7 +17,7 @@ class health_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.heart = pygame.image.load("Lib\\Asteroids_2_health_icon (1).png")
+        self.heart = pygame.image.load(resource_path("Asteroids_2_health_icon.png"))
         self.image = pygame.transform.scale(self.heart, ((int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1]))))
 
     def draw_health_bar(self, health):
@@ -33,7 +42,7 @@ class deltaV_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.heart = pygame.image.load("Lib\\Asteroids_2_fuel_icon.png")
+        self.heart = pygame.image.load(resource_path("Asteroids_2_fuel_icon.png"))
         self.image = pygame.transform.scale(self.heart, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_deltaV_bar(self, deltaV):
@@ -56,7 +65,7 @@ class missiles_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.missiles = pygame.image.load("Lib\\Asteroids_2_missle_icon.png")
+        self.missiles = pygame.image.load(resource_path("Asteroids_2_missle_icon.png"))
         self.image = pygame.transform.scale(self.missiles, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_missiles_bar(self, Number_of_missiles):
@@ -76,7 +85,7 @@ class laser_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.heart = pygame.image.load("Lib\\Asteroids_2_laser_icon.png")
+        self.heart = pygame.image.load(resource_path("Asteroids_2_laser_icon.png"))
         self.image = pygame.transform.scale(self.heart, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_laser_bar(self, laser):
@@ -134,7 +143,7 @@ class sc_info_display:
         velocity_text_line = "Velocity: " + str(self.velocity) + " [km/s]"
         velocity_text_surface = font.render(velocity_text_line, True, self.white)
         self.Surface.blit(velocity_text_surface, (((self.Resolution[0]-font.size(velocity_text_line)[0])/2), (self.Resolution[1]*2/n)))
-        acceleration_text_line = "Acceleration: " + str(self.acceleration) + " [km/s^2]"
+        acceleration_text_line = "Acceleration: " + str(self.acceleration) + " [m/s^2]"
         acceleration_text_surface = font.render(acceleration_text_line, True, self.white)
         self.Surface.blit(acceleration_text_surface, (((self.Resolution[0]-font.size(acceleration_text_line)[0])/2), (self.Resolution[1]*3/n)))
         distance_from_Earth_text_line = "Distance from Earth: " + str(self.distance_from_Earth) + " [AU]"
@@ -147,7 +156,7 @@ class sc_info_display:
     def update_sc_info(self,name,velocity,acceleration,distance_from_Earth,distance_from_Sun):
         self.name = name
         self.velocity = round(velocity/1000,1)
-        self.acceleration = round(acceleration,4)
+        self.acceleration = round(acceleration * 1000,2)
         self.distance_from_Earth = round(distance_from_Earth/Constants.AU,2)
         self.distance_from_Sun = round(distance_from_Sun/Constants.AU,2)
 
@@ -157,7 +166,7 @@ class minerals_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.minerals = pygame.image.load("Lib\\Crystals_game2.png")
+        self.minerals = pygame.image.load(resource_path("Crystals_game2.png"))
         self.image = pygame.transform.scale(self.minerals, (int(0.85*self.Resolution[1]), int(0.85*self.Resolution[1])))
 
     def draw_minerals_bar(self, minerals_count):
@@ -176,7 +185,7 @@ class rare_gas_display:
         self.Surface = surface
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
-        self.rare_gas = pygame.image.load("Lib\\Gas_barrels.png")
+        self.rare_gas = pygame.image.load(resource_path("Gas_barrels.png"))
         self.image = pygame.transform.scale(self.rare_gas, (int(0.95*self.Resolution[1]), int(0.95*resolution[1])))
 
     def draw_rare_gas_bar(self, rare_gas_count):
