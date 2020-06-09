@@ -5,27 +5,26 @@ import random
 import collections
 import pygame
 
-
 def distance(x1, y1, x2, y2):
     """
-    
+    the distance between body 1 and body 2
     :param x1: x-coordinate of first body
     :param y1: y-coordinate of first body
     :param x2: x-coordinate of second body
     :param y2: y-coordinate of second body
-    :return: the distance between body 1 and body 2
+    :return:
     """
     return math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2)
 
 
 def angle(x1, y1, x2, y2):
     """
-    
+    the angle between the two bodies and the x axis
     :param x1: x-coordinate of first body
     :param y1: y-coordinate of first body
     :param x2: x-coordinate of second body
     :param y2: y-coordinate of second body
-    :return: the angle between the two bodies and the x axis
+    :return:
     """
     return math.atan2(y2 - y1, x2 - x1)
 
@@ -36,6 +35,13 @@ class Simulation:
     asteroidList = []
 
     def __init__(self, pList, aList, Spaceship, stp):
+        """
+        This is the Simulation class. All the physics calculations used to update the positions of the objects on the screen are made here
+        :param pList: the planets in the simulation
+        :param aList: the asteroids in the simulation
+        :param Spaceship: the spaceship in the simulation
+        :param stp: the differential time step of the simulation
+        """
         self.step = stp
         self.planetList = pList
         self.asteroidList = aList
@@ -45,12 +51,12 @@ class Simulation:
 
     def updatePlanet(self, body, ax, ay, Step):
         """
-
+        it updates the acceleration of the planet and integrates its position and velocity over time
         :param body: the planet that will be updated
         :param ax: the planet's acceleration's x-component
         :param ay: the planet's acceleration's y-component
         :param Step: the differential time step
-        :return: it updates the acceleration of the planet and integrates its position and velocity over time
+        :return:
         """
         if body != self.blackhole and body != self.planetList[0]:
             vx = body.velocity_x + ax*Step
@@ -66,12 +72,12 @@ class Simulation:
 
     def updateAsteroid(self, body, ax, ay, omega, Step):
         """
-
+                it updates the acceleration of the asteroid and integrates its position and velocity over time
                 :param body: the asteroid that will be updated
                 :param ax: the asteroid's acceleration's x-component
                 :param ay: the asteroid's acceleration's y-component
                 :param Step: the differential time step
-                :return: it updates the acceleration of the asteroid and integrates its position and velocity over time
+                :return:
                 """
         vx = body.velocity_x + ax*Step
         vy = body.velocity_y + ay*Step
@@ -87,12 +93,12 @@ class Simulation:
 
     def updateSpaceShip(self, body, ax, ay, omega, Step):
         """
-
+                it updates the acceleration of the spaceship and integrates its position and velocity over time
                 :param body: the spaceship that will be updated
                 :param ax: the spaceship's acceleration's x-component
                 :param ay: the spaceship's acceleration's y-component
                 :param Step: the differential time step
-                :return: it updates the acceleration of the spaceship and integrates its position and velocity over time
+                :return:
                 """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
@@ -110,12 +116,12 @@ class Simulation:
 
     def updateMissile(self, body, ax, ay, omega, Step):
         """
-
+            it updates the acceleration of the missile and integrates its position and velocity over time
             :param body: the missile that will be updated
             :param ax: the missile's acceleration's x-component
             :param ay: the missile's acceleration's y-component
             :param Step: the differential time step
-            :return: it updates the acceleration of the missile and integrates its position and velocity over time
+            :return:
         """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
@@ -131,12 +137,12 @@ class Simulation:
 
     def updateParticle(self, body, ax, ay, Step):
         """
-
+        it updates the acceleration of the particle and integrates its position and velocity over time
         :param body: the particle that will be updated
         :param ax: the particle's acceleration's x-component
         :param ay: the particle's acceleration's y-component
         :param Step: the differential time step
-        :return: it updates the acceleration of the particle and integrates its position and velocity over time
+        :return:
         """
         vx = body.velocity_x + ax * Step
         vy = body.velocity_y + ay * Step
@@ -151,6 +157,12 @@ class Simulation:
         body.life -= 1
 
     def collision(self, missile, asteroid):
+        """
+        Checks if an asteroid bigger than a certain size is coliding with a missile. If it is, it splits the asteroid into bits.
+        :param missile: The missile that will collide with the asteroid
+        :param asteroid: The asteroid that will collide with the missile
+        :return:
+        """
         N_pieces = random.randint(4, 7)
         x = asteroid.pos_x
         y = asteroid.pos_y
@@ -180,6 +192,10 @@ class Simulation:
         asteroid = None
 
     def simulate_laser(self):
+        """
+        Simulates the collision of the laser with the asteroids. If a collision takes place, it spawns debrees at the collision point.
+        :return: Nothing
+        """
         Angle = 0
         Alpha = 0
         arm = 0
@@ -241,6 +257,10 @@ class Simulation:
 
 
     def simulate(self):
+        """
+        This is the main simulation class. It uses the law of gravity, conservation of energy and conservation of linear and angular momentum to compute and update the accelerations, velocities and positions of every object in the game.
+        :return: Nothing
+        """
         pList = self.planetList
         aList = self.asteroidList
         parList = self.particleList
@@ -346,6 +366,10 @@ class Simulation:
         self.simulate_mining()
 
     def simulate_blackhole(self):
+        """
+        Updates the mass of the black hole after a certain time has passed since its release and appends it as a planet
+        :return:
+        """
         if self.blackhole:
             if self.blackhole.bake_time > 0:
                 self.blackhole.bake_time -= 1
@@ -356,6 +380,10 @@ class Simulation:
 
 
     def collision_check(self):
+        """
+        Checks if the spaceship is colliding with anything. If it is colliding with an asteroid, it simulates an impact using the conservation of momentum
+        :return: Nothing
+        """
         self.Spaceship.collision = False
         for i in self.planetList:
             if distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x,
@@ -416,6 +444,10 @@ class Simulation:
                     self.particleList.append(debree1)
 
     def health_check(self):
+        """
+        This function checks and updates the health of the spacecraft. If the spacecraft is colliding with an object, it decreases it an incremental amount.
+        :return: Nothing
+        """
         if self.Spaceship.health >= 0:
             for i in self.planetList:
                 if self.Spaceship.collision and self.Spaceship.health >= 0:
@@ -435,6 +467,10 @@ class Simulation:
                     self.Spaceship.health = max(0, self.Spaceship.health)
 
     def deltaV(self):
+        """
+        This function updates the fuel supply of the spacecraft. If an engine is used, it decreases the fuel left by an incremental amount depending on the engine used
+        :return: 
+        """
         acc_sc = math.sqrt(self.Spaceship.acceleration_x ** 2 + self.Spaceship.acceleration_y ** 2)
         if acc_sc > 0 and self.Spaceship.Engine_fired:
             dV = 0.03*self.step
@@ -449,6 +485,10 @@ class Simulation:
             print(self.Spaceship.deltaV)
 
     def simulate_mining(self):
+        """
+        This function checks if the spacecraft is near an asteroid with resources. If it is close enough, it depleats the resources of the asteroid while increasing those of the spacecraft. After the resources are depleted, it makes the asteroid 'normal'
+        :return: Nothing
+        """
         self.Spaceship.collision = False
         for i in self.asteroidList:
             if self.Spaceship.hangar_open and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x,
@@ -472,6 +512,17 @@ class Simulation:
                     i.Type = "normal"
 
     def draw_circle_gain_minerals(self, angle, radius, color, font_size, dist, screen, resolution):
+        """
+        This function draws a 'load' circle on the screen when the spacecraft is currently mining with the progress of the operation
+        :param angle: angle relative to the spacecraft where the circle is drawn
+        :param radius: radius of the circle
+        :param color: color of the circle
+        :param font_size: size of the text inside the circle displaying the mining percentage
+        :param dist: the distance from the spaceship the circle is drawn at
+        :param screen: the surface on which the circle is drawn on
+        :param resolution: the size of the surface the circle is drawn on
+        :return: Nothing
+        """
         for i in self.asteroidList:
             if self.Spaceship.hangar_open and i.Type != "normal" and self.Spaceship.Radius + i.Radius < distance(self.Spaceship.pos_x, self.Spaceship.pos_y, i.pos_x, i.pos_y) <= (self.Spaceship.Radius + i.Radius)*2:
                 font = pygame.font.SysFont("Consolas", 11)

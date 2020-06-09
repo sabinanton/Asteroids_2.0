@@ -10,6 +10,11 @@ class Game_Map:
     red = (255, 130, 100)
     map_white = (50,50,50)
     def __init__(self, scale, step):
+        """
+        This class represents the main map drawn on the screen
+        :param scale: The scale of the simulation
+        :param step: The differential time step of the simulation
+        """
         self.SpaceShip = Celestial_bodies.SpaceShip("StarShip", 400000000, 147098070000 + 4844000000, 0, 0, 39051.33, 0, 0, 100000000)
         self.Earth = Celestial_bodies.Planet("Earth", 5.97219 * 10 ** 27, 63710000 * 25, 147098070000, 0, 0, 30040.49)
         self.Sun = Celestial_bodies.Planet("Sun", 1.989 * 10 ** 30, 13926800000/2, 0, 0, 0, 0)
@@ -32,6 +37,12 @@ class Game_Map:
         self.step = step
 
     def generate_Asteroid_Belt(self, radius, number_of_ast):
+        """
+        This function generates a randomised asteroid belt in the solar system
+        :param radius: The average radius of the belt
+        :param number_of_ast: The number of asteroids in the asteroid belt
+        :return: Nothing
+        """
         num = 0
         AstList = []
         while num < number_of_ast:
@@ -57,16 +68,33 @@ class Game_Map:
         return AstList
 
     def update(self, focus_object):
+        """
+        This function calls the simulation function for every frame and updates the virtual camera prosition
+        :param focus_object: The object the virtual camera follows
+        :return: Nothing
+        """
         self.sim.simulate()
         self.x_offset = -self.scale * focus_object.pos_x
         self.y_offset = self.scale * focus_object.pos_y
 
     def update_fixed_scale(self, focus_object, Scale):
+        """
+         This function calls the simulation function for every frame and updates the virtual camera position for the minimap
+        :param focus_object: The object the virtual camera follows
+        :param Scale: The scale of the minimap
+        :return:
+        """
         self.sim.simulate()
         self.x_offset = -Scale * focus_object.pos_x
         self.y_offset = Scale * focus_object.pos_y
 
     def draw(self, resolution, screen):
+        """
+        This function draws the elements of the main map on the screen
+        :param resolution: The size of the surface to be drawn onto
+        :param screen: The surface to be drawn onto
+        :return: Nothing
+        """
         screct = screen.get_rect()
         black = (0,0,0)
         pygame.draw.rect(screen, black, screct)
@@ -88,6 +116,15 @@ class Game_Map:
             j.draw(resolution, screen, self.x_offset, self.y_offset, self.scale, None)
 
     def draw_fixed_scale(self, min_res, window_res, screen, Scale, focus_object):
+        """
+        This function draws the elements in the minimap onto the screen
+        :param min_res: The minimap resolution
+        :param window_res: The window size
+        :param screen: The surface to be drawn onto
+        :param Scale: The scale of the minimap
+        :param focus_object: The reference object that shall be displayed in the middle of the minimap
+        :return: Nothing
+        """
         screct = screen.get_rect()
         ratio = Scale/self.scale
         width = window_res[0]*ratio

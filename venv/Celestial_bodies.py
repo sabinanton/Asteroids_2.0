@@ -6,9 +6,26 @@ import numpy as np
 import  collections
 
 def conv(scale, res, x, y, x_offset, y_offset):
+    """
+    This function converts the positions in the simulation reference system to positions on the screen in pixel coordinates
+    :param scale: Scale factor of the simulation
+    :param res: size of the screen
+    :param x: position x-coordinate
+    :param y: position y-coordinate
+    :param x_offset: virtual camera position x-coordinate
+    :param y_offset: virtual camera position y-coordinate
+    :return: The pixel coordinates of the converted point
+    """
     return (int(scale*x+res[0]/2 + x_offset), int(res[1]/2-scale*y + y_offset))
 
 def rotate(x, y, tetha):
+    """
+    This function rotates a point in the xy plane relative to the origin
+    :param x: point x-coordinate
+    :param y: point y-coordinate
+    :param tetha: the angle of the point with respect to the x-axis
+    :return: The coordinates of the rotated point
+    """
     return [int(x*math.cos(-tetha) - y*math.sin(-tetha)), int(x*math.sin(-tetha) + y*math.cos(-tetha))]
 
 class Planet:
@@ -22,6 +39,16 @@ class Planet:
     acceleration_x = 0
     acceleration_y = 0
     def __init__(self, name, m, r, x, y, vx, vy):
+        """
+        This class creates and draws the planets in the game with all their properties.
+        :param name: The name of the planet
+        :param m: The mass of the planet
+        :param r: The radius of the planet
+        :param x: x-coordinate of the planet
+        :param y: y-coordinate of the planet
+        :param vx: x-velocity of the planet
+        :param vy: y-velocity of the planet
+        """
         self.Name = name
         self.Mass = m
         self.Radius = r
@@ -31,6 +58,16 @@ class Planet:
         self.velocity_y = vy
 
     def draw(self, resolution, screen, x_offset, y_offset, scale, color):
+        """
+        This function draws the planet at the desired position on the screen
+        :param resolution: the size of the surface upon which the planet is drawn
+        :param screen: the surface upon which the planet is drawn
+        :param x_offset: the x-position of the virtual camera
+        :param y_offset: the y-position of the virtual camera
+        :param scale: the scale factor of the simulation
+        :param color: the color of the planet
+        :return: Nothing
+        """
         pos = conv(scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         pygame.draw.circle(screen, color, pos, max(2,int(self.Radius*scale)), min(2,int(self.Radius*scale)))
 
@@ -49,6 +86,19 @@ class Asteroid:
     Points = []
 
     def __init__(self, name, m, r, x, y, vx, vy, tetha, omega, type):
+        """
+        This class creates the asteroids in the game and draws them.
+        :param name: The name of the asteroid
+        :param m: The mass of the asteroid
+        :param r: The radius of the asteroid
+        :param x: The x-coordinate of the asteroid
+        :param y: The y-coordinate of the asteroid
+        :param vx: The x-velocity of the asteroid
+        :param vy: The y-velocity of the asteroid
+        :param tetha: The angle of the asteroid with respect to the x-axis
+        :param omega: The angular velocity of the asteroid
+        :param type: The type of the asteroid: normal, minerals or rare_gases
+        """
         self.Name = name
         self.Mass = m
         self.Radius = r
@@ -71,6 +121,14 @@ class Asteroid:
         self.capacity = self.content
 
     def accelerate(self, ax, ay, ang,  step):
+        """
+        This function accelerates the asteroid when an external force is applied onto it.
+        :param ax: the x-component of the acceleration
+        :param ay: the y-component of the acceleration
+        :param ang: the angular acceleration
+        :param step: the differential time step
+        :return:
+        """
         self.velocity_x += ax * step
         self.velocity_y += ay * step
         self.omega += ang * step
@@ -79,6 +137,10 @@ class Asteroid:
         #self.tetha += self.omega * step
 
     def generatePoints(self):
+        """
+        This function generates the points that form the random shape of the asteroid
+        :return: Nothing
+        """
         points = []
         offset = 190000000
         n_of_points = random.randint(5, 16)
@@ -91,6 +153,16 @@ class Asteroid:
         return points
 
     def draw(self, resolution, screen, x_offset, y_offset, scale, color):
+        """
+        This function draws the asteroid on the surface at the position and orientation specified
+        :param resolution: The size of the surface on which the asteroid is drawn
+        :param screen: The surface on whioch the asteroid is drawn
+        :param x_offset: The x-coordinate of the virtual camera
+        :param y_offset: The y-offset of the virtual camera
+        :param scale: The scale factor of the simulation
+        :param color: The color of the asteroid
+        :return: Nothing
+        """
         pts = []
         if color == None:
             if self.Type == "normal": color = self.white
@@ -127,6 +199,18 @@ class SpaceShip:
     Laser_fired = False
 
     def __init__(self, name, m, x, y, vx, vy, tetha, omega, scale):
+        """
+        This class creates and draws the spacecraft in the game.
+        :param name: The name of the spacecraft
+        :param m: The mass of the spacecraft
+        :param x: The x-coordinate of the spacecraft
+        :param y: The y-coordinate of the spacecraft
+        :param vx: The x-velocity of the spacecraft
+        :param vy: The y-velocity of the spacecraft
+        :param tetha: The angle of the spacecraft with respect to the x-axis
+        :param omega: The angular velocity of the spacecraft
+        :param scale: The scale factor of the spacecraft
+        """
         self.Name = name
         self.Mass = m
         self.pos_x = x
@@ -161,6 +245,12 @@ class SpaceShip:
 
 
     def T_accelerate(self, Thrust, Step):
+        """
+        This function accelerates the spacecraft when the main engine is fired.
+        :param Thrust: The thrust provided by the engine
+        :param Step: The differential time step of the simulation
+        :return: Nothing
+        """
         acc = Thrust / self.Mass
         if self.deltaV > 0:
             self.velocity_x += acc*math.cos(self.tetha + math.pi/2) * Step
@@ -168,6 +258,13 @@ class SpaceShip:
             self.Engine_fired = True
             self.Mass -= 50
     def a_impulse(self, Thrust, dir, Step):
+        """
+        This function accelerates the spacecraft when a thruster is fired
+        :param Thrust: the thrust of the thruster
+        :param dir: The direction in which the thruster is fired
+        :param Step: The differential time step of the simulation
+        :return: Nothing
+        """
         acc = Thrust / self.Mass
         if self.deltaV > 0:
             self.velocity_x += -dir * acc * math.cos(self.tetha + math.pi / 2) * Step
@@ -176,12 +273,23 @@ class SpaceShip:
             self.Right_stube_fired = dir
             self.Mass -= 10
     def Rotate(self, dir, Thrust):
+        """
+        This function rotates the spacecraft when a thruster is fired
+        :param dir: The direction in which the thruster is fired
+        :param Thrust: The thrust of the thruster
+        :return: Nothing
+        """
         shot = Thrust * 5 * self.scale / self.Mass
         if self.deltaV > 0:
             self.omega += dir*shot
             self.Left_stube_fired = dir
             self.Right_stube_fired = -dir
     def fire_missile(self, speed):
+        """
+        This function fires a missile from the spacecraft at a certain speed and updates the number of missiles of the spacecraft
+        :param speed: The speed of the missile
+        :return: Nothing
+        """
         if self.Number_of_missiles:
             t = self.tetha + math.pi/2
             x = self.pos_x + self.scale*3*math.cos(t)
@@ -193,6 +301,11 @@ class SpaceShip:
             self.Number_of_missiles -= 1
 
     def compute_trajectory(self, object):
+        """
+        This function predicts and draws the orbit of the spaceship based on its velocity and position using Kepler's laws
+        :param object: The body to be predicted
+        :return: Nothing
+        """
         v = math.sqrt((self.velocity_x)**2 + (self.velocity_y)**2)
         r = math.sqrt((self.pos_x)**2 + (self.pos_y)**2)
         H = (self.pos_x - object.pos_x) * (self.velocity_y) - \
@@ -211,6 +324,18 @@ class SpaceShip:
         return [p, e, phi]
 
     def draw_trajectory(self, resolution, screen, scale, x_offset, y_offset, color, samples, object):
+        """
+        This function draws the predicted trajectory of the spacecraft on the provided surface
+        :param resolution: The size of the surface to be drawn onto
+        :param screen: The surface to be drawn onto
+        :param scale: The scale factor of the simulation
+        :param x_offset: The x-coordinate of the virtual camera
+        :param y_offset: The y-coordinate of the virtual camera
+        :param color: The color of the trajectory
+        :param samples: The number of points to be used for drawing the trajectory
+        :param object: The object for which the trajectory shall be estimated
+        :return: Nothing
+        """
         pts = []
         N = samples
         step = 2*math.pi/N
@@ -226,6 +351,16 @@ class SpaceShip:
 
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        """
+        This function draws the spacecraft on the screen
+        :param resolution: The size of the screen
+        :param screen: The main surface to be drawn onto
+        :param game_scale: The simulation scale factor
+        :param x_offset: The x-coordiante of the virtual camera
+        :param y_offset: The y-coordinate of the virtual camera
+        :param color: The color of the spacecraft
+        :return: Nothing
+        """
         L_body = 10 * self.scale * game_scale
         D_body = 5 * self.scale * game_scale
         h_top = 2 * self.scale * game_scale
@@ -351,6 +486,15 @@ class Missile:
     scale = 1
 
     def __init__(self, pos_x, pos_y, v_x, v_y, tetha, scale):
+        """
+        This class creates and draws the missiles in the game on a surface
+        :param pos_x: The x-coordinate of the missile
+        :param pos_y: The y-coordinate of the missile
+        :param v_x: The x-velocity of the missile
+        :param v_y: The y-velocity of the missile
+        :param tetha: The angle of the missile with respect to the x-axis
+        :param scale: The scale factor of the missile
+        """
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.velocity_x = v_x
@@ -364,6 +508,16 @@ class Missile:
         self.Radius = 500000
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        """
+        This function draws the missile on the provided surface
+        :param resolution: The size of the surface to bedrawn onto
+        :param screen: The surface to be drawn onto
+        :param game_scale: The simulation scale factor
+        :param x_offset: The x-coordinate of the virtual camera
+        :param y_offset: The y-coordinate of the virtual camera
+        :param color: The color of the missile
+        :return: Nothing
+        """
         t = self.tetha
         L_body = 5*game_scale*self.scale
         W_body = 1*game_scale*self.scale
@@ -386,6 +540,15 @@ class Particle:
     acceleration_y = 0
 
     def __init__(self, life, pos_x, pos_y, v_x, v_y, type):
+        """
+        This class creates and draws the particles in the game
+        :param life: The life of the particle
+        :param pos_x: The x-coordinate of the particle
+        :param pos_y: The y-coordinate of the particle
+        :param v_x: The x-velocity of the particle
+        :param v_y: The y-velocity of the particle
+        :param type: The type of particle ( dependent on the type of asteroid it comes from)
+        """
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.velocity_x = v_x
@@ -403,6 +566,16 @@ class Particle:
         self.yellow = (255, 255, 0)
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        """
+        This function draws the particle on the provided surface
+        :param resolution: The size of the surface to be drawn onto
+        :param screen: The surface to be drawn onto
+        :param game_scale: The simulation scale factor
+        :param x_offset: The x-coordinate of the virtual camera
+        :param y_offset: The y-coordinate of the virtual camera
+        :param color: The color of the particle
+        :return: Nothing
+        """
         if color == None:
             if self.Type == "normal": color = self.white
             if self.Type == "normal_map": color = self.map_white
@@ -421,6 +594,13 @@ class BlackHole:
     Radius = 0
 
     def __init__(self, x, y, mass, radius):
+        """
+        This class creates and draws the black hole in the game. It is similar to the planet class
+        :param x: The x-coordinate of the black hole
+        :param y: The y-coordinate of the black hole
+        :param mass: The mass of the black hole
+        :param radius: The radius of the black hole
+        """
         self.pos_x = x
         self.pos_y = y
         self.velocity_x = 0
@@ -432,6 +612,16 @@ class BlackHole:
         self.bake_time = 200
 
     def draw(self, resolution, screen, game_scale, x_offset, y_offset, color):
+        """
+        This function draws the black hole onto the surface provided
+        :param resolution: The size of the surface to be drawn onto
+        :param screen: The surface to be drawn onto
+        :param game_scale: The simulation scale factor
+        :param x_offset: The x-coordinate of the virtual camera
+        :param y_offset: The y-coordinate of the virtual camera
+        :param color: The color of the black hole
+        :return: Nothing
+        """
         p = conv(game_scale, resolution, self.pos_x, self.pos_y, x_offset, y_offset)
         try:
             pygame.draw.circle(screen, color, [p[0], p[1]], max(2,int(self.Radius * game_scale)), 1)
