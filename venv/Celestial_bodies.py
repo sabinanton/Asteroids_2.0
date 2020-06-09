@@ -157,6 +157,7 @@ class SpaceShip:
         self.Laser_power = 100
         self.velocity = math.sqrt(self.velocity_x**2+self.velocity_y**2)
         self.acceleration = math.sqrt(self.acceleration_x**2 + self.acceleration_y**2)
+        self.mission_profit = -10000
 
 
     def T_accelerate(self, Thrust, Step):

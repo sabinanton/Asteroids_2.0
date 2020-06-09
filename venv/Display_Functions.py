@@ -3,6 +3,7 @@ import Constants
 import math
 import os
 import sys
+import Screens
 
 
 def resource_path(relative_path):
@@ -174,11 +175,14 @@ class minerals_display:
         font = pygame.font.SysFont("Consolas", 20)
         text_line = "" + str(minerals_count)
         text_surface = font.render(text_line, True, self.white)
+        unit_measure = "ton"
+        unit_surface = font.render(unit_measure, True, self.white)
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
-        self.Surface.blit(text_surface, (int(0.55*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
-
+        self.Surface.blit(text_surface, (int(0.35*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(unit_surface,
+                          (int(0.55 * self.Resolution[0]), int((self.Resolution[1] - font.size(text_line)[1]) / 2)))
 class rare_gas_display:
     def __init__(self, resolution, surface):
         self.Resolution = resolution
@@ -193,10 +197,13 @@ class rare_gas_display:
         font = pygame.font.SysFont("Consolas", 20)
         text_line = "" + str(rare_gas_count)
         text_surface = font.render(text_line, True, self.white)
+        unit_measure = "ton"
+        unit_surface = font.render(unit_measure, True, self.white)
         pygame.draw.rect(self.Surface, self.black, background)
         pygame.draw.rect(self.Surface, self.white, background, 2)
         self.Surface.blit(self.image, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-self.image.get_rect().size[1])/2)))
-        self.Surface.blit(text_surface, (int(0.55*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(text_surface, (int(0.35*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(unit_surface, (int(0.55*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
 
 
 class Button:
@@ -307,7 +314,25 @@ class Text_box_Display:
         self.Width = width
         self.Height = height
 
+class Profit_Display:
+    def __init__(self, resolution, surface):
+        self.Resolution = resolution
+        self.Surface = surface
+        self.black = (0, 0, 0)
+        self.white = (255, 255, 255)
 
+    def draw_profit_bar(self, mission_profit):
+        background = pygame.Rect([0, 0, self.Resolution[0], self.Resolution[1]])
+        font = pygame.font.SysFont("Consolas", 16)
+        text_line = "Profit: " + str(mission_profit)
+        text_surface = font.render(text_line, True, self.white)
+        unit_measure = "$"
+        unit_surface = font.render(unit_measure, True, self.white)
+        pygame.draw.rect(self.Surface, self.black, background)
+        pygame.draw.rect(self.Surface, self.white, background, 2)
+        self.Surface.blit(text_surface, (int(0.05*self.Resolution[0]), int((self.Resolution[1]-font.size(text_line)[1])/2)))
+        self.Surface.blit(unit_surface,
+                          (int(0.9 * self.Resolution[0]), int((self.Resolution[1] - font.size(text_line)[1]) / 2)))
 
 
 

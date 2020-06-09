@@ -9,8 +9,11 @@ import Screens
 import Simulation_tools
 import pygame
 import sys
+import time
 
-
+game_started = False
+now = 10**25
+future = 10000
 
 def controls(event, Map):
     keys = pygame.key.get_pressed()
@@ -67,13 +70,17 @@ spacecraft_bar_res = (abs(resolution[0]-minimap_res[0]-health_bar_res[0]-deltaV_
 spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
 spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res,spacecraft_bar_surface)
 
-minerals_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
+minerals_bar_res = (int((1/2)*minimap_res[0]), int(0.05*resolution[1]))
 minerals_bar_surface = pygame.Surface(minerals_bar_res)
 minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
 
-rare_gas_bar_res = (int((1/4)*minimap_res[0]), int(0.05*resolution[1]))
+rare_gas_bar_res = (int((1/2)*minimap_res[0]), int(0.05*resolution[1]))
 rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
+
+profit_bar_res = (int((2/3)*minimap_res[0]), int(0.05*resolution[1]))
+profit_bar_surface = pygame.Surface(profit_bar_res)
+profit_bar = Display_Functions.Profit_Display(profit_bar_res, profit_bar_surface)
 
 start_screen = Screens.Start_Screen(screen,resolution)
 cursor = pygame.image.load(Display_Functions.resource_path("Cursor.png"))
@@ -81,8 +88,15 @@ cursor = pygame.transform.scale(cursor, (25, 25))
 pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 soundtrack = pygame.mixer.Sound(Display_Functions.resource_path("Soundtrack.wav"))
 
-while running :
+end_screen = Screens.end_screen(screen, resolution, map.SpaceShip.health, map.SpaceShip.deltaV, map.SpaceShip.Number_of_missiles, map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases)
 
+def end_screen_check():
+    if map.SpaceShip.health<=0 or Simulation_tools.distance(map.SpaceShip.pos_x, map.SpaceShip.pos_y, map.Sun.pos_x, map.Sun.pos_y)>20*Constants.AU:
+        end_screen.end_is_active = True
+
+while running :
+    keys = pygame.key.get_pressed()
+    end_screen_check()
     if start_screen.start_is_active:
         start_screen.draw_start_screen()
         if start_screen.play.isPressed and start_screen.play.isHovered and start_screen.HowToPlayActive == False:
@@ -93,6 +107,11 @@ while running :
             start_screen.HowToPlayActive = True
         elif start_screen.HowToPlayActive and start_screen.HTPclose.isHovered and start_screen.HTPclose.isPressed:
             start_screen.HowToPlayActive = False
+
+    elif end_screen.end_is_active == True:
+        dist = Simulation_tools.distance(map.SpaceShip.pos_x,map.SpaceShip.pos_y,map.Sun.pos_x,map.Sun.pos_y)
+        end_screen.draw_end_screen(end_screen.calculate_score(map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases, map.SpaceShip.Number_of_missiles, map.SpaceShip.health, dist))
+
     else:
         minimap = pygame.Surface(minimap_res)
         map.update(map.SpaceShip)
@@ -123,6 +142,20 @@ while running :
         map.sim.draw_circle_gain_minerals(math.pi / 6, 20, (255, 255, 255), 12, 50, screen, resolution)
         rare_gas_bar.draw_rare_gas_bar(map.SpaceShip.Rare_Gases)
         screen.blit(rare_gas_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0],0))
+        dist = Simulation_tools.distance(map.SpaceShip.pos_x, map.SpaceShip.pos_y, map.Sun.pos_x, map.Sun.pos_y)
+        mission_profit = end_screen.calculate_score(map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases, map.SpaceShip.Number_of_missiles, map.SpaceShip.health, dist)
+        map.SpaceShip.mission_profit = mission_profit
+        profit_bar.draw_profit_bar(map.SpaceShip.mission_profit)
+        screen.blit(profit_bar_surface, (resolution[0]-minerals_bar_res[0]-rare_gas_bar_res[0]-profit_bar_res[0],0))
+        if keys[pygame.K_SPACE] or keys[pygame.K_d] or keys[pygame.K_a] or keys[pygame.K_w] or keys[pygame.K_s] or keys[
+            pygame.K_r] or keys[pygame.K_e] and game_started == False:
+            game_started = True
+            now = time.time()
+        if time.time()-now>=30:
+            if spacecraft_bar.distance_from_Earth < 0.1:
+                end_screen.end_is_active = True
+        print(spacecraft_bar.distance_from_Earth)
+
     (x, y) = pygame.mouse.get_pos()
     screen.blit(cursor, (x, y))
     pygame.display.flip()
@@ -162,12 +195,16 @@ while running :
                             black_hole_bar_res[0]), int(0.5*resolution[1]))
                 spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
                 spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
-                minerals_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                minerals_bar_res = (int((1/2) * minimap_res[0]), int(0.05 * resolution[1]))
                 minerals_bar_surface = pygame.Surface(minerals_bar_res)
                 minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
-                rare_gas_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+                rare_gas_bar_res = (int((1/2) * minimap_res[0]), int(0.05 * resolution[1]))
                 rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
                 rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
+                profit_bar_res = (int((2 / 3) * minimap_res[0]), int(0.05 * resolution[1]))
+                profit_bar_surface = pygame.Surface(profit_bar_res)
+                profit_bar = Display_Functions.Profit_Display(profit_bar_res, profit_bar_surface)
+                end_screen.update(resolution,screen)
         if start_screen.start_is_active:
             start_screen.Name_SC.text_box_controls(event)
         if start_screen.start_is_active == False:
