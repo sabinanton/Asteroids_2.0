@@ -431,8 +431,8 @@ class Simulation:
                     velocity_collision_asteroid = math.sqrt(
                         (self.Spaceship.velocity_x - j.velocity_x) ** 2 + (
                                     self.Spaceship.velocity_y - j.velocity_y) ** 2)
-                    area_asteroid = math.pi * j.Radius ** 2
-                    self.Spaceship.health -= 0.4 * 10 ** (-24) * (velocity_collision_asteroid * area_asteroid) / 2
+                    self.Spaceship.health -= 0.2 * 10 ** (-13) * (velocity_collision_asteroid * j.Mass) / 2
+                    self.Spaceship.health = max(0, self.Spaceship.health)
 
     def deltaV(self):
         acc_sc = math.sqrt(self.Spaceship.acceleration_x ** 2 + self.Spaceship.acceleration_y ** 2)

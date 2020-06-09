@@ -7,6 +7,11 @@ import Constants
 
 class Start_Screen:
     def __init__(self, screen, resolution):
+        """
+        Describes the entire start screen layout and content, including all necessary buttons and textboxes
+        :param screen: This is the main game screen initially until the player presses play
+        :param resolution: This is the size of the game screen (essentially the size of the game window)
+        """
         self.Screen = screen
         self.Resolution = resolution
         self.start_is_active = True
@@ -20,9 +25,11 @@ class Start_Screen:
         self.HTPimage = pygame.transform.scale(self.HTPimage, (int(0.5 * self.Resolution[0]) - 4, int(2 / 3 * self.Resolution[1]) - 4))
         self.HTPclose = Display_Functions.Button(self.Screen, "Close", self.black, int(0.5*self.Resolution[0]+(0.2*self.Resolution[0]/2)), int(0.75*self.Resolution[1]), int(0.1*self.Resolution[0]), int(0.05*self.Resolution[1]))
 
-
-
     def draw_start_screen(self):
+        """
+        This function draws the entire start screen, including the play and how-to-play buttons, and the name textbox.
+        :return:
+        """
         pygame.draw.rect(self.Screen, self.black, pygame.Rect(0,0,self.Resolution[0], self.Resolution[1]))
         self.play.draw()
         self.how_to_play.draw()
@@ -34,6 +41,12 @@ class Start_Screen:
         if self.HowToPlayActive: self.draw_how_to_play()
 
     def update(self, new_resolution, new_screen):
+        """
+        Resizes and repositions the game screen and all content in it, if the game window is changed
+        :param new_resolution: Updated size of the game screen
+        :param new_screen: Updated game screen
+        :return:
+        """
         self.Screen = new_screen
         self.Resolution = new_resolution
         self.play.update(int(0.5*self.Resolution[0]-(0.3*self.Resolution[0]/2)), int(0.65*self.Resolution[1]), int(0.3*self.Resolution[0]), int(0.1*self.Resolution[1]))
@@ -44,6 +57,10 @@ class Start_Screen:
         self.HTPclose.update(int(0.5*self.Resolution[0]+(0.2*self.Resolution[0]/2)), int(0.75*self.Resolution[1]), int(0.1*self.Resolution[0]), int(0.05*self.Resolution[1]))
 
     def draw_how_to_play(self):
+        """
+        Displays the how_to_play information on the game screen if button is pressed by user.
+        :return:
+        """
         width = int(0.5*self.Resolution[0])
         height = int(2/3*self.Resolution[1])
         x = int(0.5*self.Resolution[0] - width/2)
@@ -56,6 +73,16 @@ class Start_Screen:
 
 class end_screen:
     def __init__(self, screen, resolution, health, fuel, missiles, minerals, rare_gas):
+        """
+        Describes the entire end screen layout and content, including all necessary buttons and text
+        :param screen: This is the main game screen once the game has ended
+        :param resolution: This is the size of the game screen (essentially the size of the game window)
+        :param health: The health of the spacecraft
+        :param fuel: The amount of propellant available on the spacecraft for orbital burns
+        :param missiles: The amount of ammunition available on the spacecraft
+        :param minerals: The amount of minerals collected by the spacecraft
+        :param rare_gas: The amount of rare gasses collected by the spacecraft
+        """
         self.Screen = screen
         self.Resolution = resolution
         self.end_is_active = False
@@ -73,6 +100,15 @@ class end_screen:
         self.initial_cost = 10000000
 
     def calculate_score(self, minerals, rare_gas, missiles, health, distance):
+        """
+        Calculates the user's profit based on amount of resources collected and amount of fuel, health and ammo saved
+        :param minerals: The amount of minerals collected by the spacecraft
+        :param rare_gas: The amount of rare gasses collected by the spacecraft
+        :param missiles: The amount of ammunition available on the spacecraft
+        :param health: The health of the spacecraft
+        :param distance: How far the spacecraft is from Earth
+        :return:
+        """
         if health <= 0:
             profit = -self.initial_cost
         if distance >= 20*Constants.AU:
@@ -82,6 +118,11 @@ class end_screen:
         return profit
 
     def draw_end_screen(self, score):
+        """
+        This function draws the endscreen and the appropriate text based on the user's profits
+        :param score: This is the exact same as the user's profits that were made
+        :return:
+        """
         pygame.draw.rect(self.Screen, self.black, pygame.Rect(0, 0, self.Resolution[0], self.Resolution[1]))
         text_font = pygame.font.SysFont("Algerian", 80)
         over_text = "GAME OVER"
