@@ -101,6 +101,9 @@ class end_screen:
         self.win_st = pygame.mixer.Sound(Display_Functions.resource_path("End_Screen_win.wav"))
         self.loose_st = pygame.mixer.Sound(Display_Functions.resource_path("End_Screen_loose.wav"))
         self.sound_played = False
+        self.play_again = Display_Functions.Button(self.Screen, "PLAY AGAIN", self.black,
+                                             int(0.5 * self.Resolution[0] - (0.3 * self.Resolution[0] / 2)),
+                                             int(0.6 * self.Resolution[1]), int(0.3*self.Resolution[0]), int(0.1*self.Resolution[1]))
 
     def calculate_score(self, minerals, rare_gas, missiles, health, distance):
         """
@@ -134,6 +137,7 @@ class end_screen:
         self.Screen.blit(over_surface, (int((self.Resolution[0]-text_font.size(over_text)[0])/2), int(0.2*self.Resolution[1])))
         win_text = "MISSION SUCCESSFUL! YOUR PROFIT IS: "+str(int(score))+" $"
         win_surface = text_font2.render(win_text, False, self.white)
+        self.play_again.draw()
         lose_text = "MISSION FAILED! YOUR LOST: "+str(int(-score))+" $"
         if score <= -self.initial_cost:
             lose_text = "MISSION FAILED! YOUR SPACECRAFT WAS LOST IN SPACE! YOU LOST " + str(int(-score)) + " $"
@@ -153,6 +157,9 @@ class end_screen:
     def update(self, new_resolution, new_screen):
         self.Screen = new_screen
         self.Resolution = new_resolution
+        self.play_again.update(int(0.5 * self.Resolution[0] - (0.3 * self.Resolution[0] / 2)), int(0.65 * self.Resolution[1]),
+                         int(0.3 * self.Resolution[0]), int(0.1 * self.Resolution[1]))
+
 
 
 

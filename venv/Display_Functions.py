@@ -313,19 +313,26 @@ class Button:
         self.Height = height
         self.isHovered = False
         self.isPressed = False
+        self.isReleased = False
+        self.lastframe = False
 
     def draw(self):
         """
         Draws the actual buttons on the screen and how it interacts with the cursor on the screen
         :return:
         """
+        self.isReleased = False
+
         color_o = (255 - self.Color[0], 255 - self.Color[1], 255 - self.Color[2])
         color_i = self.Color
         x, y = pygame.mouse.get_pos()
         i1, i2, i3 = pygame.mouse.get_pressed()
         self.isPressed = False
         self.isHovered = False
-        if i1 == 1: self.isPressed = True
+        if i1 == 1:
+            self.isPressed = True
+        if self.isPressed == False and self.lastframe == True:
+            self.isReleased = True
         if self.X <= x <= self.X + self.Width and self.Y <= y <= self.Y + self.Height:
             self.isHovered = True
         if self.isPressed and self.isHovered:
@@ -334,6 +341,8 @@ class Button:
             color_i = aux
         elif self.isHovered:
             color_i = (50 + color_i[0], 50 + color_i[1], 50 + color_i[2])
+
+        self.lastframe = self.isPressed
 
         rect = pygame.Rect(self.X, self.Y, self.Width, self.Height)
         pygame.draw.rect(self.Surface, color_i, rect)

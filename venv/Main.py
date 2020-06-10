@@ -133,13 +133,13 @@ while running:
     """If statements used below are needed for start screen interaction with user commands"""
     if start_screen.start_is_active:
         start_screen.draw_start_screen()
-        if start_screen.play.isPressed and start_screen.play.isHovered and start_screen.HowToPlayActive == False:
+        if start_screen.play.isReleased and start_screen.play.isHovered and start_screen.HowToPlayActive == False:
             start_screen.start_is_active = False
             map.SpaceShip.Name = start_screen.Name_SC.input
             soundtrack.play(-1)
-        if start_screen.how_to_play.isPressed and start_screen.how_to_play.isHovered:
+        if start_screen.how_to_play.isReleased and start_screen.how_to_play.isHovered:
             start_screen.HowToPlayActive = True
-        elif start_screen.HowToPlayActive and start_screen.HTPclose.isHovered and start_screen.HTPclose.isPressed:
+        elif start_screen.HowToPlayActive and start_screen.HTPclose.isHovered and start_screen.HTPclose.isReleased:
             start_screen.HowToPlayActive = False
 
         """elif statement draws end screen surface if end screen becomes activated based on gameplay"""
@@ -148,6 +148,68 @@ while running:
         end_screen.draw_end_screen(end_screen.calculate_score(map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases,
                                                               map.SpaceShip.Number_of_missiles, map.SpaceShip.health,
                                                               dist))
+
+        if end_screen.play_again.isReleased and end_screen.play_again.isHovered:
+            """This if statement resets everything if the play again button is pressed"""
+            game_started = False
+            now = 10 ** 25
+            future = 10000
+
+            screct = screen.get_rect()
+            black = (0, 0, 0)
+            running = True
+            i = 0
+            map = Maps.Game_Map((1 / 30000000*resolution[1]/720), 25555)
+            map.update_fixed_scale(map.Sun, mini_map_scale)
+
+            health_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            health_bar_surface = pygame.Surface(health_bar_res)
+            Health_bar = Display_Functions.health_display(health_bar_res, health_bar_surface)
+
+            deltaV_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            deltaV_bar_surface = pygame.Surface(deltaV_bar_res)
+            deltaV_bar = Display_Functions.deltaV_display(deltaV_bar_res, deltaV_bar_surface)
+
+
+            missiles_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            missiles_bar_surface = pygame.Surface(missiles_bar_res)
+            missiles_bar = Display_Functions.missiles_display(missiles_bar_res, missiles_bar_surface)
+
+
+            laser_bar_res = (int((3 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            laser_bar_surface = pygame.Surface(laser_bar_res)
+            laser_bar = Display_Functions.laser_display(laser_bar_res, laser_bar_surface)
+
+
+            black_hole_bar_res = (int((1 / 4) * minimap_res[0]), int(0.05 * resolution[1]))
+            black_hole_bar_surface = pygame.Surface(black_hole_bar_res)
+            black_hole_bar = Display_Functions.black_hole_display(black_hole_bar_res, black_hole_bar_surface)
+
+
+            spacecraft_bar_res = (abs(
+                resolution[0] - minimap_res[0] - health_bar_res[0] - deltaV_bar_res[0] - missiles_bar_res[0] -
+                laser_bar_res[0] -
+                black_hole_bar_res[0]), int(0.5 * resolution[1]))
+            spacecraft_bar_surface = pygame.Surface(spacecraft_bar_res)
+            spacecraft_bar = Display_Functions.sc_info_display(spacecraft_bar_res, spacecraft_bar_surface)
+
+            minerals_bar_res = (int((1 / 2) * minimap_res[0]), int(0.05 * resolution[1]))
+            minerals_bar_surface = pygame.Surface(minerals_bar_res)
+            minerals_bar = Display_Functions.minerals_display(minerals_bar_res, minerals_bar_surface)
+
+            rare_gas_bar_res = (int((1 / 2) * minimap_res[0]), int(0.05 * resolution[1]))
+            rare_gas_bar_surface = pygame.Surface(rare_gas_bar_res)
+            rare_gas_bar = Display_Functions.rare_gas_display(rare_gas_bar_res, rare_gas_bar_surface)
+
+            profit_bar_res = (int((2 / 3) * minimap_res[0]), int(0.05 * resolution[1]))
+            profit_bar_surface = pygame.Surface(profit_bar_res)
+            profit_bar = Display_Functions.Profit_Display(profit_bar_res, profit_bar_surface)
+
+            start_screen.start_is_active = True
+            end_screen.end_is_active = False
+            end_screen.sound_played = False
+            end_screen.loose_st.stop()
+            end_screen.win_st.stop()
 
         """Following else statement are drawing commands for when user is playing the game"""
     else:
