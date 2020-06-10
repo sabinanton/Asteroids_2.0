@@ -109,8 +109,8 @@ start_screen = Screens.Start_Screen(screen, resolution)
 cursor = pygame.image.load(Display_Functions.resource_path("Cursor.png"))
 cursor = pygame.transform.scale(cursor, (25, 25))
 pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-soundtrack = pygame.mixer.Sound(Display_Functions.resource_path("Soundtrack.wav"))
-
+soundtrack = [pygame.mixer.Sound(Display_Functions.resource_path("Soundtrack.wav")),pygame.mixer.Sound(Display_Functions.resource_path("Soundtrack2.wav"))]
+song = random.randint(0,1)
 """Creates start end screen (next line)"""
 end_screen = Screens.end_screen(screen, resolution, map.SpaceShip.health, map.SpaceShip.deltaV,
                                 map.SpaceShip.Number_of_missiles, map.SpaceShip.Minerals, map.SpaceShip.Rare_Gases)
@@ -124,7 +124,7 @@ def end_screen_check():
     if map.SpaceShip.health <= 0 or Simulation_tools.distance(map.SpaceShip.pos_x, map.SpaceShip.pos_y, map.Sun.pos_x,
                                                               map.Sun.pos_y) > 20 * Constants.AU:
         end_screen.end_is_active = True
-        soundtrack.stop()
+        soundtrack[song].stop()
 
 
 while running:
@@ -136,7 +136,7 @@ while running:
         if start_screen.play.isReleased and start_screen.play.isHovered and start_screen.HowToPlayActive == False:
             start_screen.start_is_active = False
             map.SpaceShip.Name = start_screen.Name_SC.input
-            soundtrack.play(-1)
+            soundtrack[song].play(-1)
         if start_screen.how_to_play.isReleased and start_screen.how_to_play.isHovered:
             start_screen.HowToPlayActive = True
         elif start_screen.HowToPlayActive and start_screen.HTPclose.isHovered and start_screen.HTPclose.isReleased:
@@ -210,6 +210,7 @@ while running:
             end_screen.sound_played = False
             end_screen.loose_st.stop()
             end_screen.win_st.stop()
+            song = random.randint(0,1)
 
         """Following else statement are drawing commands for when user is playing the game"""
     else:
@@ -277,7 +278,7 @@ while running:
     if time.time() - now >= 15:
         if spacecraft_bar.distance_from_Earth < 0.12:
             end_screen.end_is_active = True
-            soundtrack.stop()
+            soundtrack[song].stop()
 
     (x, y) = pygame.mouse.get_pos()
     screen.blit(cursor, (x, y))

@@ -138,7 +138,7 @@ class end_screen:
         win_text = "MISSION SUCCESSFUL! YOUR PROFIT IS: "+str(int(score))+" $"
         win_surface = text_font2.render(win_text, False, self.white)
         self.play_again.draw()
-        lose_text = "MISSION FAILED! YOUR LOST: "+str(int(-score))+" $"
+        lose_text = "MISSION FAILED! YOU LOST: "+str(int(-score))+" $"
         if score <= -self.initial_cost:
             lose_text = "MISSION FAILED! YOUR SPACECRAFT WAS LOST IN SPACE! YOU LOST " + str(int(-score)) + " $"
         lose_surface = text_font2.render(lose_text, False, self.white)
