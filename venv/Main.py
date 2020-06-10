@@ -124,6 +124,7 @@ def end_screen_check():
     if map.SpaceShip.health <= 0 or Simulation_tools.distance(map.SpaceShip.pos_x, map.SpaceShip.pos_y, map.Sun.pos_x,
                                                               map.Sun.pos_y) > 20 * Constants.AU:
         end_screen.end_is_active = True
+        soundtrack.stop()
 
 
 while running:
@@ -211,9 +212,10 @@ while running:
         pygame.K_s]) and game_started == False and start_screen.start_is_active == False:
         game_started = True
         now = time.time()
-    if time.time() - now >= 10:
-        if spacecraft_bar.distance_from_Earth < 0.15:
+    if time.time() - now >= 15:
+        if spacecraft_bar.distance_from_Earth < 0.12:
             end_screen.end_is_active = True
+            soundtrack.stop()
 
     (x, y) = pygame.mouse.get_pos()
     screen.blit(cursor, (x, y))

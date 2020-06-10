@@ -98,6 +98,9 @@ class end_screen:
         self.cost_missiles = 5
         self.repair_factor = 5000
         self.initial_cost = 10000000
+        self.win_st = pygame.mixer.Sound(Display_Functions.resource_path("End_Screen_win.wav"))
+        self.loose_st = pygame.mixer.Sound(Display_Functions.resource_path("End_Screen_loose.wav"))
+        self.sound_played = False
 
     def calculate_score(self, minerals, rare_gas, missiles, health, distance):
         """
@@ -124,19 +127,28 @@ class end_screen:
         :return:
         """
         pygame.draw.rect(self.Screen, self.black, pygame.Rect(0, 0, self.Resolution[0], self.Resolution[1]))
-        text_font = pygame.font.SysFont("Algerian", 80)
+        text_font = pygame.font.SysFont("Algerian", 120)
         over_text = "GAME OVER"
         over_surface = text_font.render(over_text, False, self.white)
-        text_font2 = pygame.font.SysFont("Consolas", 30)
-        self.Screen.blit(over_surface, (int((self.Resolution[0]-text_font.size(over_text)[0])/2), int(0.15*self.Resolution[1])))
+        text_font2 = pygame.font.SysFont("Consolas", 20)
+        self.Screen.blit(over_surface, (int((self.Resolution[0]-text_font.size(over_text)[0])/2), int(0.2*self.Resolution[1])))
         win_text = "MISSION SUCCESSFUL! YOUR PROFIT IS: "+str(int(score))+" $"
         win_surface = text_font2.render(win_text, False, self.white)
-        lose_text = "MISSION FAILED! YOUR PROFIT IS: "+str(int(score))+" $"
+        lose_text = "MISSION FAILED! YOUR LOST: "+str(int(-score))+" $"
+        if score <= -self.initial_cost:
+            lose_text = "MISSION FAILED! YOUR SPACECRAFT WAS LOST IN SPACE! YOU LOST " + str(int(-score)) + " $"
         lose_surface = text_font2.render(lose_text, False, self.white)
         if score>0:
-            self.Screen.blit(win_surface, (int((self.Resolution[0]-text_font2.size(win_text)[0])/2), int(0.45*self.Resolution[1])))
+            if self.sound_played == False:
+                self.win_st.play(-1)
+                self.sound_played = True
+
+            self.Screen.blit(win_surface, (int((self.Resolution[0]-text_font2.size(win_text)[0])/2), int(0.55*self.Resolution[1])))
         if score<=0:
-            self.Screen.blit(lose_surface, (int((self.Resolution[0]-text_font2.size(lose_text)[0])/2), int(0.45*self.Resolution[1])))
+            if self.sound_played == False:
+                self.loose_st.play(-1)
+                self.sound_played = True
+            self.Screen.blit(lose_surface, (int((self.Resolution[0]-text_font2.size(lose_text)[0])/2), int(0.55*self.Resolution[1])))
 
     def update(self, new_resolution, new_screen):
         self.Screen = new_screen
