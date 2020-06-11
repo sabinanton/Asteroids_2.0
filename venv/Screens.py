@@ -115,6 +115,7 @@ class end_screen:
         :param distance: How far the spacecraft is from Earth
         :return:
         """
+        self.health = health
         if health <= 0:
             profit = -self.initial_cost
         if distance >= 20*Constants.AU:
@@ -139,16 +140,16 @@ class end_screen:
         win_surface = text_font2.render(win_text, False, self.white)
         self.play_again.draw()
         lose_text = "MISSION FAILED! YOU LOST: "+str(int(-score))+" $"
-        if score <= -self.initial_cost:
-            lose_text = "MISSION FAILED! YOUR SPACECRAFT WAS LOST IN SPACE! YOU LOST " + str(int(-score)) + " $"
+        if score <= -self.initial_cost or self.health <= 0:
+            lose_text = "MISSION FAILED! YOUR SPACECRAFT WAS LOST IN SPACE! YOU LOST " + str(-self.initial_cost) + " $"
         lose_surface = text_font2.render(lose_text, False, self.white)
-        if score>0:
+        if score>0 and self.health>0:
             if self.sound_played == False:
                 self.win_st.play(-1)
                 self.sound_played = True
 
             self.Screen.blit(win_surface, (int((self.Resolution[0]-text_font2.size(win_text)[0])/2), int(0.55*self.Resolution[1])))
-        if score<=0:
+        else:
             if self.sound_played == False:
                 self.loose_st.play(-1)
                 self.sound_played = True
